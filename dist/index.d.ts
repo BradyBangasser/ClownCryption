@@ -56,9 +56,7 @@ declare class ClownCryption {
     get algorithm(): Crypto.CipherCCMTypes | Crypto.CipherGCMTypes | Crypto.CipherOCBTypes;
     get commonReplacers(): [string, string][];
     exportStringToFile(encryptedString: string, { fileName, filePath, overwrite, exportType, encryptFile, key, includeKey, iv, includeIv, algorithm, includeAlgorithm, salt, includeSalt, charset, includeCharset, commonReplacers }: IFileExportOptions): string;
-    importStringFile(filePath: string, key?: string): string | {
-        [key: string]: string;
-    };
+    importStringFile(filePath: string, key?: string): any;
     exportConfigToFile(fileName: string, options: IExportConfigOptions): string;
     static condenseBinary(binaryString: string): string;
     static decondenseBinary(condensedBinary: string): string;
@@ -74,9 +72,7 @@ declare class CFS {
         [key: string]: string;
     }, key?: string, options?: {
         importByFileContent: boolean;
-    }): string | {
-        [key: string]: string;
-    };
+    }): any;
     static exportConfig(filePath: string, client: ClownCryption, { encrypt, exportStyle, includeAlgorithm, includeCharset, includeCommonReplacers, includeSalt }: IExportConfigOptions): string;
     static readFileConfig(filePath: string, key?: string): {
         [key: string]: string;
@@ -100,7 +96,6 @@ declare class CFS {
     static isHex(str: string | {
         [key: string]: string;
     }): boolean;
-    static test(): void;
     private static _stringProp;
     private static _serializePath;
 }
@@ -204,7 +199,7 @@ interface IExportConfigOptions {
     includeCommonReplacers?: boolean;
     includeAlgorithm?: boolean;
     includeSalt?: boolean;
-    exportStyle?: "clown" | "json";
+    exportStyle?: "clown" | "json" | "js";
 }
 
 export { CFS, Character, CharsetMode, CharsetType, ClownOptions, IBinaryCharset, IBinaryCharsetOptions, ICharsetChars, IEfficientBinaryCharset, IExportConfigOptions, IFileExportOptions, ILiteralCharset, ILiteralCharsetOptions, IMessageFileContent };

@@ -1,6 +1,5 @@
 import { ClownOptions, IEfficientBinaryCharset, IExportConfigOptions, IFileExportOptions } from ".";
 import CharsetManager from "./defaultCharsets/defaults";
-import constants from "./constants";
 import Crypto from "crypto"
 import CFS from "./fileSystem";
 import BaseCharset from "./defaultCharsets/baseCharset";
@@ -15,7 +14,7 @@ class ClownCryption {
     private _salt: string
     private _iv: string
 
-    private static readonly _commonReplacers: [string, string][] = constants.binaryEfficientOptions.commonReplacers
+    private static readonly _commonReplacers: [string, string][] = [["100", "_"], ["110", "+"]]
 
     constructor({
         key,

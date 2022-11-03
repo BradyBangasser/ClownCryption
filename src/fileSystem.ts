@@ -40,6 +40,8 @@ class CFS {
             message: str
         }
 
+        if (exportType === "js") return this._exportToJS(fPath, exportContent)
+
         let builder: { [key: string]: string } | string
         if (exportType === "clown") builder = this.clownify(realFileName, exportContent)
         else builder = exportContent
@@ -54,6 +56,11 @@ class CFS {
     static readStringFile(filePath: string | { [key: string]: string }, key?: string, options?: { importByFileContent: boolean }) {
 
         let fileContent: string | { [key: string]: string }
+
+        if (typeof filePath === "string" && options?.importByFileContent === false) {
+            filePath = this._serializePath(filePath).path
+            if (path.extname(filePath.toString()) === ".js") return this._importFromJS(filePath)
+        }
 
         if (options?.importByFileContent === true) fileContent = filePath
         else {
@@ -94,6 +101,8 @@ class CFS {
 
         let fileContent: string
 
+        if (exportStyle === "js") return this._exportToJS(fPath, exportOb)
+
         if (exportStyle === "clown") {
             fileContent = this.clownify(fileName, exportOb, encrypt)
         } else if (typeof encrypt === "string") fileContent = JSON.stringify(this.encryptTransport(exportOb, encrypt))
@@ -104,7 +113,9 @@ class CFS {
     }
 
     static readFileConfig(filePath: string, key?: string): { [key: string]: string } {
-        if (!filePath.startsWith(process.cwd())) path.join(process.cwd(), filePath)
+        filePath = this._serializePath(filePath).path
+
+        if (path.extname(filePath).endsWith("js")) return this._importFromJS(filePath)
 
         let content = fs.readFileSync(filePath).toString()
 
@@ -155,29 +166,15 @@ class CFS {
     }
 
     private static _exportToJS(fPath: string | fs.PathLike, content: { [key: string]: any }) {
-        
         const { path: newFPath } = this._serializePath(fPath)
+        const jsStringify = (object: { [key: string]: any } | any[]) => `{\n\t${Object.entries(object).map(([key, thing]) => `${key}: ${(typeof thing === "string") ? `"${thing}"` : ((Array.isArray(thing) ? JSON.stringify(thing) : thing))}`).join(",\n\t")}\n}`
 
-        const jsStringify = (object: { [key: string]: any } | any[], recursive: boolean = true) => {
-
-            const stringifyElement = (element: any): typeof element => {
-                if (typeof element === "string") console.log(element, JSON.stringify(`${element}`))
-                if (Array.isArray(element)) return (!recursive ? JSON.stringify(element) : element.map(subelement => stringifyElement(subelement)))
-                if (typeof element === "object") return (!recursive ? JSON.stringify(element) : jsStringify(Object.entries(element)))
-                if (typeof element !== "function") return JSON.stringify(`${element}`)
-                return element
-            }
-
-            if (Array.isArray(object)) return (!recursive ? JSON.stringify(object) : object.map((val) => stringifyElement(val)))
-            return Object.entries(object).map(([key, val]) => [key, (!recursive ? JSON.stringify(val) : stringifyElement(val))]).map(x => x.join(": ")).join(",\n\t")
-        }
-
-        fs.writeFileSync(`${newFPath}.js`, Buffer.from(`export default {\n\t${jsStringify(content)}\n}`), "utf-8")
+        fs.writeFileSync(`${newFPath}.js`, Buffer.from(`module.exports = ${jsStringify(content)}`))
         return `${newFPath}.js`
     }
 
     private static _importFromJS(fPath: string | fs.PathLike) {
-
+        return require(fPath.toString())
     }
 
     static parseClown(content: string, key?: string): { [key: string]: string } {
@@ -222,18 +219,6 @@ class CFS {
         if (typeof str === "string") return ((str.match(/[0-9"a-f]{1}/gi)?.length ?? 0) === str.length)
         let objKey = Object.entries(str)[0]
         return ((objKey[0].match(/[0-9a-f]{1}/gi)?.length ?? 0) === objKey[0].length)
-    }
-
-    public static test() {
-        // this._exportToJS("dist/test", {
-        //     hello: "hi",
-        //     hola: function () {
-        //         return "hi"
-        //     },
-        //     "hm": "test"
-        // })
-
-        this._exportToJS("dist/test", new ClownCryption({iv: "string", key: "string"}))
     }
 
     private static _stringProp = (prop: any, includeProp: boolean): string => ((includeProp === true) ? (prop?.toString() !== "[object Object]" && typeof prop?.toString() === "string") ? prop.toString() : JSON.stringify(prop) : undefined)
