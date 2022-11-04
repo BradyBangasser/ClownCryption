@@ -49,253 +49,11 @@ var __privateSet = (obj, member, value, setter) => {
 // src/index.ts
 var src_exports = {};
 __export(src_exports, {
-  CFS: () => fileSystem_default
+  CFS: () => fileSystem_default,
+  ClownCryption: () => clowncryption_default,
+  default: () => src_default
 });
 module.exports = __toCommonJS(src_exports);
-
-// src/fileSystem.ts
-var import_crypto2 = __toESM(require("crypto"));
-var fs = __toESM(require("fs"));
-var import_path = __toESM(require("path"));
-
-// src/clowncryption.ts
-var import_crypto = __toESM(require("crypto"));
-var _key;
-var _ClownCryption = class {
-  constructor({
-    key,
-    iv,
-    salt = "salt",
-    charset = "eb",
-    algorithm = "aes-192-ccm",
-    commonReplacers = _ClownCryption._commonReplacers
-  }) {
-    __privateAdd(this, _key, void 0);
-    __publicField(this, "_charset");
-    __publicField(this, "_encryptionAlgorithm");
-    __publicField(this, "_commonReplacers");
-    __publicField(this, "_salt");
-    __publicField(this, "_iv");
-    __privateSet(this, _key, key);
-    this._iv = iv;
-    this._salt = salt;
-    this._charset = this._getCharset(charset);
-    this._encryptionAlgorithm = algorithm;
-    this._commonReplacers = commonReplacers;
-  }
-  _getCharset(charset) {
-    if (charset instanceof PublicCharset)
-      return charset;
-    if (typeof charset === "string") {
-      const chset = defaults_default.getCharset(charset);
-      if (typeof chset !== "undefined")
-        return chset;
-    }
-    throw new TypeError(`Charset (${charset}) is not a valid charset`);
-  }
-  encrypt(str, key = this.key, charset = this._charset) {
-    const cipher = import_crypto.default.createCipheriv(this._encryptionAlgorithm, import_crypto.default.scryptSync(key, this.salt, 24), Buffer.alloc(16, this.iv));
-    try {
-      const crypto = cipher.update(str, "utf-8", "hex") + cipher.final("hex");
-      return charset.encode(crypto);
-    } catch (err) {
-      console.error(err);
-    }
-    return "";
-  }
-  decrypt(str, key = this.key, charset = this._charset) {
-    const decipher = import_crypto.default.createDecipheriv(this._encryptionAlgorithm, import_crypto.default.scryptSync(key, this.salt, 24), Buffer.alloc(16, this.iv));
-    try {
-      const decrypt = charset.decode(str);
-      return decipher.update(decrypt, "hex", "utf-8") + decipher.final("utf-8");
-    } catch (err) {
-      console.error(err);
-    }
-    return "";
-  }
-  get key() {
-    return __privateGet(this, _key);
-  }
-  get iv() {
-    return this._iv;
-  }
-  get charset() {
-    return this._charset;
-  }
-  get salt() {
-    return this._salt;
-  }
-  get algorithm() {
-    return this._encryptionAlgorithm;
-  }
-  get commonReplacers() {
-    return this._commonReplacers;
-  }
-  exportStringToFile(encryptedString, {
-    fileName,
-    filePath,
-    overwrite,
-    exportType,
-    encryptFile,
-    key = this.key,
-    includeKey,
-    iv = this.iv,
-    includeIv,
-    algorithm = this.algorithm,
-    includeAlgorithm,
-    salt = this.salt,
-    includeSalt,
-    charset = this._charset,
-    includeCharset,
-    commonReplacers = this.commonReplacers
-  }) {
-    return fileSystem_default.generateStringFile(encryptedString, {
-      fileName,
-      filePath,
-      overwrite,
-      exportType,
-      encryptFile,
-      key,
-      includeKey,
-      iv,
-      includeIv,
-      algorithm,
-      includeAlgorithm,
-      salt,
-      includeSalt,
-      charset,
-      includeCharset,
-      commonReplacers
-    });
-  }
-  importStringFile(filePath, key) {
-    return fileSystem_default.readStringFile(filePath, key);
-  }
-  exportConfigToFile(fileName, options) {
-    return fileSystem_default.exportConfig(fileName, this, options);
-  }
-  static condenseBinary(binaryString) {
-    let count = 0;
-    let lastChar = "";
-    let efficientBuilder = "";
-    const variables = [];
-    const buildStringSplit = binaryString.split("");
-    for (let i in buildStringSplit) {
-      if (buildStringSplit[i] !== lastChar) {
-        if (count < 2) {
-          efficientBuilder += _ClownCryption.multiplyString(lastChar, count);
-          lastChar = buildStringSplit[i];
-          count = 0;
-        } else {
-          efficientBuilder += lastChar + count;
-          lastChar = buildStringSplit[i];
-          count = 0;
-        }
-      } else {
-        count++;
-      }
-    }
-    efficientBuilder += lastChar + count;
-    for (let i in this._commonReplacers) {
-      efficientBuilder = efficientBuilder.replaceAll(this._commonReplacers[i][0], this._commonReplacers[i][1]);
-    }
-    for (let i = 0; i <= 9; i++) {
-      if (!efficientBuilder.includes(i.toString()))
-        variables.push(i.toString());
-    }
-    let patterns = _ClownCryption.findPattern(efficientBuilder);
-    let possibleSavings = 0;
-    let varSpace = 1;
-    const assignedVariables = [];
-    for (let i in variables) {
-      if (typeof patterns[i] === "undefined")
-        continue;
-      const variObject = {
-        variable: variables[i],
-        replaces: patterns[i][0],
-        uses: variables[i].length + patterns[i][0].length,
-        saves: patterns[i][0].length * patterns[i][1]
-      };
-      possibleSavings += variObject.saves;
-      varSpace += variObject.uses;
-      assignedVariables.push(variObject);
-    }
-    let variableString = [];
-    if (possibleSavings > varSpace) {
-      assignedVariables.forEach((assigned) => {
-        variableString.push(assigned.variable + assigned.replaces);
-        efficientBuilder = efficientBuilder.replaceAll(assigned.replaces, assigned.variable);
-      });
-      efficientBuilder = variableString.join(".") + ":" + efficientBuilder;
-    }
-    console.log(`${(1 - efficientBuilder.length / binaryString.length) * 100}% size reduction`);
-    return efficientBuilder;
-  }
-  static decondenseBinary(condensedBinary) {
-    let buildString = "";
-    if (condensedBinary.includes(":")) {
-      const variableString = condensedBinary.split(":")[0];
-      condensedBinary = condensedBinary.split(":")[1];
-      const variables = variableString.split(".");
-      variables.forEach((variable) => {
-        condensedBinary = condensedBinary.replaceAll(variable[0], variable.substring(1));
-      });
-    }
-    for (let i in this._commonReplacers) {
-      condensedBinary = condensedBinary.replaceAll(this._commonReplacers[i][1], this._commonReplacers[i][0]);
-    }
-    condensedBinary.split("").forEach((value, index, array) => {
-      if (parseInt(value) >= 2) {
-        buildString += _ClownCryption.multiplyString(array[index - 1], parseInt(value));
-        return;
-      }
-      if (parseInt(array[index + 1]) <= 1) {
-        return buildString += value;
-      }
-    });
-    return buildString + buildString[buildString.length - 1];
-  }
-  static findPattern(str, maxPatternSize = 4, minPatternSize = 3) {
-    let patterns = {};
-    for (let i = maxPatternSize; i >= minPatternSize; i--) {
-      let n;
-      for (n = 0; n < str.length; n += i) {
-        const pattern = str.substring(n, n + i);
-        patterns[pattern] = (patterns[pattern] ?? 0) + 1;
-      }
-    }
-    return Object.entries(patterns).sort((a, b) => b[1] * b[0].length - a[1] * a[0].length).filter((value, index, array) => value[1] > 1 && value[0].length === array[0][0].length);
-  }
-  static importFileConfig(fileName, key) {
-    const config = fileSystem_default.readFileConfig(fileName, key);
-    console.log(baseCharset_default.importCharset(config.charset));
-    return new this({
-      key: config.key,
-      iv: config.iv,
-      algorithm: config.algorithm,
-      salt: config.salt
-    });
-  }
-  static getBinary(str) {
-    const strSplit = str.split("");
-    const builder = [];
-    for (let i in strSplit) {
-      builder.push(strSplit[i].charCodeAt(0).toString(2));
-    }
-    return builder.join(" ");
-  }
-  static multiplyString(str, num) {
-    let builder = "";
-    for (let i = 0; i <= num; i++) {
-      builder += str;
-    }
-    return builder;
-  }
-};
-var ClownCryption = _ClownCryption;
-_key = new WeakMap();
-__publicField(ClownCryption, "_commonReplacers", [["100", "_"], ["110", "+"]]);
-var clowncryption_default = ClownCryption;
 
 // src/errors.ts
 var UnknownCharError = class extends Error {
@@ -558,6 +316,14 @@ var CharsetManager = class {
 __publicField(CharsetManager, "instance");
 var defaults_default = CharsetManager.init();
 
+// src/clowncryption.ts
+var import_crypto2 = __toESM(require("crypto"));
+
+// src/fileSystem.ts
+var import_crypto = __toESM(require("crypto"));
+var fs = __toESM(require("fs"));
+var import_path = __toESM(require("path"));
+
 // src/constants.ts
 var constants = {
   algorithm: "aes-192-cbc",
@@ -682,16 +448,16 @@ var _CFS = class {
   }
   static encryptTransport(str, key) {
     if (typeof str === "string") {
-      const cipher = import_crypto2.default.createCipheriv(constants_default.algorithm, import_crypto2.default.scryptSync(key, "salt", 24), Buffer.alloc(16));
+      const cipher = import_crypto.default.createCipheriv(constants_default.algorithm, import_crypto.default.scryptSync(key, "salt", 24), Buffer.alloc(16));
       return cipher.update(str, "utf-8", "hex") + cipher.final("hex");
     }
     let builder = {};
     Object.entries(str).forEach(([oKey, val]) => {
       if (typeof val === "undefined")
         return;
-      let cipher = import_crypto2.default.createCipheriv(constants_default.algorithm, import_crypto2.default.scryptSync(key, "salt", 24), Buffer.alloc(16));
+      let cipher = import_crypto.default.createCipheriv(constants_default.algorithm, import_crypto.default.scryptSync(key, "salt", 24), Buffer.alloc(16));
       let newKey = cipher.update(oKey, "utf-8", "hex") + cipher.final("hex");
-      cipher = import_crypto2.default.createCipheriv(constants_default.algorithm, import_crypto2.default.scryptSync(key, "salt", 24), Buffer.alloc(16));
+      cipher = import_crypto.default.createCipheriv(constants_default.algorithm, import_crypto.default.scryptSync(key, "salt", 24), Buffer.alloc(16));
       let newVal = cipher.update(typeof val === "string" ? val : (val == null ? void 0 : val.toString()) ?? JSON.stringify(val), "utf-8", "hex") + cipher.final("hex");
       builder[newKey] = newVal;
     });
@@ -701,15 +467,15 @@ var _CFS = class {
     if (typeof str === "object") {
       const builder = {};
       Object.entries(str).forEach(([oKey, string]) => {
-        let decipher2 = import_crypto2.default.createDecipheriv(constants_default.algorithm, import_crypto2.default.scryptSync(key, "salt", 24), Buffer.alloc(16));
+        let decipher2 = import_crypto.default.createDecipheriv(constants_default.algorithm, import_crypto.default.scryptSync(key, "salt", 24), Buffer.alloc(16));
         const newOKey = decipher2.update(oKey, "hex", "utf-8") + decipher2.final("utf-8");
-        decipher2 = import_crypto2.default.createDecipheriv(constants_default.algorithm, import_crypto2.default.scryptSync(key, "salt", 24), Buffer.alloc(16));
+        decipher2 = import_crypto.default.createDecipheriv(constants_default.algorithm, import_crypto.default.scryptSync(key, "salt", 24), Buffer.alloc(16));
         const newString = decipher2.update(string, "hex", "utf-8") + decipher2.final("utf-8");
         builder[newOKey] = newString;
       });
       return builder;
     }
-    let decipher = import_crypto2.default.createDecipheriv(constants_default.algorithm, import_crypto2.default.scryptSync(key, "salt", 24), Buffer.alloc(16));
+    let decipher = import_crypto.default.createDecipheriv(constants_default.algorithm, import_crypto.default.scryptSync(key, "salt", 24), Buffer.alloc(16));
     return decipher.update(str, "hex", "utf-8") + decipher.final("utf-8");
   }
   static _exportToJS(fPath, content) {
@@ -781,7 +547,301 @@ var _CFS = class {
 var CFS = _CFS;
 __publicField(CFS, "_stringProp", (prop, includeProp) => includeProp === true ? (prop == null ? void 0 : prop.toString()) !== "[object Object]" && typeof (prop == null ? void 0 : prop.toString()) === "string" ? prop.toString() : JSON.stringify(prop) : void 0);
 var fileSystem_default = CFS;
+
+// src/clowncryption.ts
+var _key;
+var _ClownCryption = class {
+  constructor({
+    key,
+    iv,
+    salt = "pepper",
+    charset = "eb",
+    algorithm = "aes-192-ccm",
+    commonReplacers = _ClownCryption._commonReplacers
+  }) {
+    __privateAdd(this, _key, void 0);
+    __publicField(this, "_charset");
+    __publicField(this, "_encryptionAlgorithm");
+    __publicField(this, "_commonReplacers");
+    __publicField(this, "_salt");
+    __publicField(this, "_iv");
+    __privateSet(this, _key, key);
+    this._iv = iv;
+    this._salt = salt;
+    this._charset = this._getCharset(charset);
+    this._encryptionAlgorithm = algorithm;
+    this._commonReplacers = commonReplacers;
+  }
+  _getCharset(charset) {
+    if (charset instanceof PublicCharset)
+      return charset;
+    if (typeof charset === "string") {
+      const chset = defaults_default.getCharset(charset);
+      if (typeof chset !== "undefined")
+        return chset;
+    }
+    throw new TypeError(`Charset (${charset}) is not a valid charset`);
+  }
+  encrypt({
+    message,
+    key = this.key,
+    iv = this.iv,
+    charset = this.charset,
+    algorithm = this.algorithm,
+    salt = this.salt
+  }) {
+    const cipher = import_crypto2.default.createCipheriv(algorithm, import_crypto2.default.scryptSync(key, salt, 24), Buffer.alloc(16, iv));
+    try {
+      const crypto = cipher.update(message, "utf-8", "hex") + cipher.final("hex");
+      return charset.encode(crypto);
+    } catch (err) {
+      console.error(err);
+    }
+    return "";
+  }
+  static encrypt({
+    message,
+    key,
+    iv,
+    charset = defaults_default.getCharset("DefaultEfficientBinary"),
+    algorithm = "aes-192-ccm",
+    salt = "pepper"
+  }) {
+    if (!(charset instanceof PublicCharset))
+      throw new TypeError("Charset is not valid");
+    const cipher = import_crypto2.default.createCipheriv(algorithm, import_crypto2.default.scryptSync(key, salt, 24), Buffer.alloc(16, iv));
+    try {
+      const crypto = cipher.update(message, "utf-8", "hex") + cipher.final("hex");
+      return charset.encode(crypto);
+    } catch (err) {
+      console.error(err);
+    }
+    return "";
+  }
+  decrypt({
+    message,
+    key = this.key,
+    iv = this.iv,
+    salt = this.salt,
+    algorithm = this.algorithm,
+    charset = this.charset
+  }) {
+    const decipher = import_crypto2.default.createDecipheriv(algorithm, import_crypto2.default.scryptSync(key, salt, 24), Buffer.alloc(16, iv));
+    try {
+      const decrypt = charset.decode(message);
+      return decipher.update(decrypt, "hex", "utf-8") + decipher.final("utf-8");
+    } catch (err) {
+      console.error(err);
+    }
+    return "";
+  }
+  static decrypt({
+    message,
+    key,
+    iv,
+    charset = defaults_default.getCharset("DefaultEfficientBinary"),
+    algorithm = "aes-192-ccm",
+    salt = "pepper"
+  }) {
+    if (!(charset instanceof PublicCharset))
+      throw new TypeError("Charset is not valid");
+    const decipher = import_crypto2.default.createDecipheriv(algorithm, import_crypto2.default.scryptSync(key, salt, 24), Buffer.alloc(16, iv));
+    try {
+      const decrypt = charset.decode(message);
+      return decipher.update(decrypt, "hex", "utf-8") + decipher.final("utf-8");
+    } catch (err) {
+      console.error(err);
+    }
+    return "";
+  }
+  get key() {
+    return __privateGet(this, _key);
+  }
+  get iv() {
+    return this._iv;
+  }
+  get charset() {
+    return this._charset;
+  }
+  get salt() {
+    return this._salt;
+  }
+  get algorithm() {
+    return this._encryptionAlgorithm;
+  }
+  get commonReplacers() {
+    return this._commonReplacers;
+  }
+  exportStringToFile(encryptedString, {
+    fileName,
+    filePath,
+    overwrite,
+    exportType,
+    encryptFile,
+    key = this.key,
+    includeKey,
+    iv = this.iv,
+    includeIv,
+    algorithm = this.algorithm,
+    includeAlgorithm,
+    salt = this.salt,
+    includeSalt,
+    charset = this._charset,
+    includeCharset,
+    commonReplacers = this.commonReplacers
+  }) {
+    return fileSystem_default.generateStringFile(encryptedString, {
+      fileName,
+      filePath,
+      overwrite,
+      exportType,
+      encryptFile,
+      key,
+      includeKey,
+      iv,
+      includeIv,
+      algorithm,
+      includeAlgorithm,
+      salt,
+      includeSalt,
+      charset,
+      includeCharset,
+      commonReplacers
+    });
+  }
+  importStringFile(filePath, key) {
+    return fileSystem_default.readStringFile(filePath, key);
+  }
+  exportConfigToFile(fileName, options) {
+    return fileSystem_default.exportConfig(fileName, this, options);
+  }
+  static condenseBinary(binaryString) {
+    let count = 0;
+    let lastChar = "";
+    let efficientBuilder = "";
+    const variables = [];
+    const buildStringSplit = binaryString.split("");
+    for (let i in buildStringSplit) {
+      if (buildStringSplit[i] !== lastChar) {
+        if (count < 2) {
+          efficientBuilder += _ClownCryption.multiplyString(lastChar, count);
+          lastChar = buildStringSplit[i];
+          count = 0;
+        } else {
+          efficientBuilder += lastChar + count;
+          lastChar = buildStringSplit[i];
+          count = 0;
+        }
+      } else {
+        count++;
+      }
+    }
+    efficientBuilder += lastChar + count;
+    for (let i in this._commonReplacers) {
+      efficientBuilder = efficientBuilder.replaceAll(this._commonReplacers[i][0], this._commonReplacers[i][1]);
+    }
+    for (let i = 0; i <= 9; i++) {
+      if (!efficientBuilder.includes(i.toString()))
+        variables.push(i.toString());
+    }
+    let patterns = _ClownCryption.findPattern(efficientBuilder);
+    let possibleSavings = 0;
+    let varSpace = 1;
+    const assignedVariables = [];
+    for (let i in variables) {
+      if (typeof patterns[i] === "undefined")
+        continue;
+      const variObject = {
+        variable: variables[i],
+        replaces: patterns[i][0],
+        uses: variables[i].length + patterns[i][0].length,
+        saves: patterns[i][0].length * patterns[i][1]
+      };
+      possibleSavings += variObject.saves;
+      varSpace += variObject.uses;
+      assignedVariables.push(variObject);
+    }
+    let variableString = [];
+    if (possibleSavings > varSpace) {
+      assignedVariables.forEach((assigned) => {
+        variableString.push(assigned.variable + assigned.replaces);
+        efficientBuilder = efficientBuilder.replaceAll(assigned.replaces, assigned.variable);
+      });
+      efficientBuilder = variableString.join(".") + ":" + efficientBuilder;
+    }
+    console.log(`${(1 - efficientBuilder.length / binaryString.length) * 100}% size reduction`);
+    return efficientBuilder;
+  }
+  static decondenseBinary(condensedBinary) {
+    let buildString = "";
+    if (condensedBinary.includes(":")) {
+      const variableString = condensedBinary.split(":")[0];
+      condensedBinary = condensedBinary.split(":")[1];
+      const variables = variableString.split(".");
+      variables.forEach((variable) => {
+        condensedBinary = condensedBinary.replaceAll(variable[0], variable.substring(1));
+      });
+    }
+    for (let i in this._commonReplacers) {
+      condensedBinary = condensedBinary.replaceAll(this._commonReplacers[i][1], this._commonReplacers[i][0]);
+    }
+    condensedBinary.split("").forEach((value, index, array) => {
+      if (parseInt(value) >= 2) {
+        buildString += _ClownCryption.multiplyString(array[index - 1], parseInt(value));
+        return;
+      }
+      if (parseInt(array[index + 1]) <= 1) {
+        return buildString += value;
+      }
+    });
+    return buildString + buildString[buildString.length - 1];
+  }
+  static findPattern(str, maxPatternSize = 4, minPatternSize = 3) {
+    let patterns = {};
+    for (let i = maxPatternSize; i >= minPatternSize; i--) {
+      let n;
+      for (n = 0; n < str.length; n += i) {
+        const pattern = str.substring(n, n + i);
+        patterns[pattern] = (patterns[pattern] ?? 0) + 1;
+      }
+    }
+    return Object.entries(patterns).sort((a, b) => b[1] * b[0].length - a[1] * a[0].length).filter((value, index, array) => value[1] > 1 && value[0].length === array[0][0].length);
+  }
+  static importFileConfig(fileName, key) {
+    const config = fileSystem_default.readFileConfig(fileName, key);
+    console.log(baseCharset_default.importCharset(config.charset));
+    return new this({
+      key: config.key,
+      iv: config.iv,
+      algorithm: config.algorithm,
+      salt: config.salt
+    });
+  }
+  static getBinary(str) {
+    const strSplit = str.split("");
+    const builder = [];
+    for (let i in strSplit) {
+      builder.push(strSplit[i].charCodeAt(0).toString(2));
+    }
+    return builder.join(" ");
+  }
+  static multiplyString(str, num) {
+    let builder = "";
+    for (let i = 0; i <= num; i++) {
+      builder += str;
+    }
+    return builder;
+  }
+};
+var ClownCryption = _ClownCryption;
+_key = new WeakMap();
+__publicField(ClownCryption, "_commonReplacers", [["100", "_"], ["110", "+"]]);
+var clowncryption_default = ClownCryption;
+
+// src/index.ts
+var src_default = clowncryption_default;
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
-  CFS
+  CFS,
+  ClownCryption
 });

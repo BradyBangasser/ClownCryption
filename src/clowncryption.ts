@@ -1,10 +1,14 @@
-import { ClownOptions, IEfficientBinaryCharset, IExportConfigOptions, IFileExportOptions } from ".";
+import { ClownOptions, EncryptOptions, IEfficientBinaryCharset, IExportConfigOptions, IFileExportOptions, StaticEncryptOptions } from ".";
 import CharsetManager from "./defaultCharsets/defaults";
 import Crypto from "crypto"
 import CFS from "./fileSystem";
 import BaseCharset from "./defaultCharsets/baseCharset";
 import { PublicCharset } from "./defaultCharsets/charsets";
 
+
+/**
+ * Main Client of ClownCryption
+ */
 class ClownCryption {
 
     #key: string
@@ -19,7 +23,7 @@ class ClownCryption {
     constructor({
         key,
         iv,
-        salt = "salt",
+        salt = "pepper",
         charset = "eb",
         algorithm = "aes-192-ccm",
         commonReplacers = ClownCryption._commonReplacers
@@ -43,12 +47,23 @@ class ClownCryption {
         throw new TypeError(`Charset (${charset}) is not a valid charset`)
     }
 
-    // encryption 
-    public encrypt(str: string, key: string | undefined = this.key, charset: BaseCharset = this._charset as BaseCharset) {
-        const cipher = Crypto.createCipheriv(this._encryptionAlgorithm as any, Crypto.scryptSync(key, this.salt, 24), Buffer.alloc(16, this.iv))
+    /**
+     * 
+     * @param {EncryptionOptions} options options for the encryption 
+     * @returns {string}
+     */
+    public encrypt({
+        message,
+        key = this.key,
+        iv = this.iv,
+        charset = this.charset,
+        algorithm = this.algorithm,
+        salt = this.salt
+    }: EncryptOptions): string {
+        const cipher = Crypto.createCipheriv(algorithm, Crypto.scryptSync(key, salt, 24), Buffer.alloc(16, iv))
 
         try {
-            const crypto = cipher.update(str, "utf-8", "hex") + cipher.final("hex")
+            const crypto = cipher.update(message, "utf-8", "hex") + cipher.final("hex")
             return charset.encode(crypto)
         } catch (err: any) {
             console.error(err)
@@ -57,11 +72,62 @@ class ClownCryption {
         return ""
     }
 
-    public decrypt(str: string, key: string | undefined = this.key, charset: BaseCharset = this._charset as BaseCharset) {
-        const decipher = Crypto.createDecipheriv(this._encryptionAlgorithm, Crypto.scryptSync(key, this.salt, 24), Buffer.alloc(16, this.iv))
+    public static encrypt({
+        message,
+        key,
+        iv,
+        charset = CharsetManager.getCharset("DefaultEfficientBinary"),
+        algorithm = "aes-192-ccm",
+        salt = "pepper"
+    }: StaticEncryptOptions) {
+        if (!(charset instanceof PublicCharset)) throw new TypeError("Charset is not valid")
+
+        const cipher = Crypto.createCipheriv(algorithm, Crypto.scryptSync(key, salt, 24), Buffer.alloc(16, iv))
 
         try {
-            const decrypt = charset.decode(str)
+            const crypto = cipher.update(message, "utf-8", "hex") + cipher.final("hex")
+            return charset.encode(crypto)
+        } catch (err: any) {
+            console.error(err)
+        }
+
+        return ""
+    }
+
+    public decrypt({
+        message,
+        key = this.key,
+        iv = this.iv,
+        salt = this.salt,
+        algorithm = this.algorithm,
+        charset = this.charset
+    }: EncryptOptions) {
+        const decipher = Crypto.createDecipheriv(algorithm, Crypto.scryptSync(key, salt, 24), Buffer.alloc(16, iv))
+
+        try {
+            const decrypt = charset.decode(message)
+            return decipher.update(decrypt, "hex", "utf-8") + decipher.final("utf-8")
+        } catch(err: any) {
+            console.error(err)
+        }
+
+        return ""
+    }
+
+    public static decrypt({
+        message,
+        key,
+        iv,
+        charset = CharsetManager.getCharset("DefaultEfficientBinary"),
+        algorithm = "aes-192-ccm",
+        salt = "pepper"
+    }: StaticEncryptOptions) {
+        if (!(charset instanceof PublicCharset)) throw new TypeError("Charset is not valid")
+
+        const decipher = Crypto.createDecipheriv(algorithm, Crypto.scryptSync(key, salt, 24), Buffer.alloc(16, iv))
+
+        try {
+            const decrypt = charset.decode(message)
             return decipher.update(decrypt, "hex", "utf-8") + decipher.final("utf-8")
         } catch(err: any) {
             console.error(err)

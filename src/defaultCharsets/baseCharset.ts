@@ -1,4 +1,4 @@
-import { IBinaryCharset, Character, CharsetMode, CharsetType, IEfficientBinaryCharset, ICharsetChars, ILiteralCharset } from "..";
+import { IBinaryCharset, CharsetMode, CharsetType, IEfficientBinaryCharset, ICharsetChars, ILiteralCharset } from "..";
 import ClownCryption from "../clowncryption";
 import constants from "../constants";
 import { UnknownCharError } from "../errors";
@@ -56,7 +56,7 @@ abstract class BaseCharset {
         })
     }
 
-    public getChar(character: Character | number) {
+    public getChar(character: string | number) {
         return this._charsetMap.get(new String(character) as string)
     }
 
