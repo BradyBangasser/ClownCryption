@@ -5,7 +5,20 @@ import { IExportConfigOptions, IFileExportOptions } from ".";
 import ClownCryption from "./clowncryption";
 import constants from "./constants";
 
+/**
+ * Clown File System, manages files, imports, and exports
+ */
 class CFS {
+
+    /** @hidden */
+    private constructor() {}
+
+    /**
+     * Creates a file that contains the message and other parameters
+     * @param {string} str The message to be exported to the file
+     * @param {IFileExportOptions} options The export options 
+     * @returns {string} The export file's path
+     */
     static generateStringFile(str: string, {
         fileName,
         filePath,
@@ -53,16 +66,23 @@ class CFS {
         return `${fPath}.${exportType}`
     }
 
-    static readStringFile(filePath: string | { [key: string]: string }, key?: string, options?: { importByFileContent: boolean }) {
+    /**
+     * Reads the content of a file and returns them in object format
+     * @param filePath The path to the file
+     * @param key The key to decrypt the file
+     * @param importByFileContent If the filePath param is set to the file content
+     * @returns The content of the file in object format
+     */
+    static readStringFile(filePath: string | { [key: string]: string }, key?: string, importByFileContent: boolean = false): { [key: string]: any } {
 
         let fileContent: string | { [key: string]: string }
 
-        if (typeof filePath === "string" && options?.importByFileContent === false) {
+        if (typeof filePath === "string" && importByFileContent === false) {
             filePath = this._serializePath(filePath).path
             if (path.extname(filePath.toString()) === ".js") return this._importFromJS(filePath)
         }
 
-        if (options?.importByFileContent === true) fileContent = filePath
+        if (importByFileContent === true) fileContent = filePath
         else {
             if (!(filePath as string).startsWith(process.cwd())) filePath = path.join(process.cwd(), filePath as string)
 
@@ -71,7 +91,7 @@ class CFS {
         }
 
         if (typeof key === "string" && this.isHex(fileContent)) {
-            if (typeof fileContent === "object") return this.decryptTransport(fileContent, key)
+            if (typeof fileContent === "object") return this.decryptTransport(fileContent, key) as { [key: string]: any }
             return this.parseClown(fileContent, key)
         }
         
@@ -79,6 +99,13 @@ class CFS {
         else return this.parseClown(fileContent)
     }
 
+    /**
+     * This exports the configuration of a client to a file
+     * @param filePath The path of the export file
+     * @param client The {@link ClownCryption} client
+     * @param options The options for exporting
+     * @returns The export file's path
+     */
     static exportConfig(filePath: string, client: ClownCryption, {
         encrypt = false,
         exportStyle = "clown",
@@ -112,6 +139,12 @@ class CFS {
         return `${fPath}.${exportStyle}`
     }
 
+    /**
+     * Read a configuration file and returns it as an object
+     * @param filePath Path to the file to read
+     * @param key The encryption key
+     * @returns The configuration
+     */
     static readFileConfig(filePath: string, key?: string): { [key: string]: string } {
         filePath = this._serializePath(filePath).path
 
@@ -124,6 +157,12 @@ class CFS {
         return JSON.parse(content)
     }
 
+    /**
+     * Encrypts a string or object
+     * @param str The content to encrypt
+     * @param key The key for the encryption algorithm
+     * @returns Encrypted message
+     */
     static encryptTransport<T extends { [key: string]: unknown }>(str: T | string, key: string): { [key: string]: string } | string {
         if (typeof str === "string") {
             const cipher = Crypto.createCipheriv(constants.algorithm, Crypto.scryptSync(key, "salt", 24), Buffer.alloc(16))
@@ -145,6 +184,12 @@ class CFS {
         return builder
     }
 
+    /**
+     * Decrypts content returned by the {@link CFS.encryptTransport | Encrypt Transport} method
+     * @param str The return value of {@link CFS.encryptTransport | Encrypt Transport}
+     * @param key The key of the encryption
+     * @returns Unencrypted content
+     */
     static decryptTransport(str: string | { [key: string]: string }, key: string): typeof str {
         if (typeof str === "object") {
             const builder: { [key: string]: string } = {}
@@ -165,6 +210,12 @@ class CFS {
         return decipher.update(str, "hex", "utf-8") + decipher.final("utf-8")
     }
 
+    /**
+     * Exports an object to a js file
+     * @param fPath The export file's path
+     * @param content The content to be exported
+     * @returns The path to the exported file
+     */
     private static _exportToJS(fPath: string | fs.PathLike, content: { [key: string]: any }) {
         const { path: newFPath } = this._serializePath(fPath)
         const jsStringify = (object: { [key: string]: any } | any[]) => `{\n\t${Object.entries(object).map(([key, thing]) => `${key}: ${(typeof thing === "string") ? `"${thing}"` : ((Array.isArray(thing) ? JSON.stringify(thing) : thing))}`).join(",\n\t")}\n}`
@@ -173,10 +224,21 @@ class CFS {
         return `${newFPath}.js`
     }
 
+    /**
+     * Imports the content from a js file
+     * @param fPath The file's path
+     * @returns The file's content
+     */
     private static _importFromJS(fPath: string | fs.PathLike) {
         return require(fPath.toString())
     }
 
+    /**
+     * Parses the content of a .clown file and returns it as an object
+     * @param content The content of a .clown file
+     * @param key The key to the encryption of the file
+     * @returns Content of the .clown file as an object
+     */
     static parseClown(content: string, key?: string): { [key: string]: string } {
         let parsedContent: string = JSON.parse(content)
 
@@ -199,6 +261,13 @@ class CFS {
         return builder
     }
 
+    /**
+     * Puts an object in .clown format
+     * @param fileName The file's name
+     * @param content The file's content
+     * @param encrypt If you want to encrypt the file or not, if a string is provided than that string is used as the key, defaults to false
+     * @returns String in .clown format
+     */
     static clownify(fileName: string, content: { [key: string]: any }, encrypt: false | string = false): string {
         let builder = `[${fileName}]`
 
@@ -215,13 +284,31 @@ class CFS {
         return builder
     }
 
+    /**
+     * Check to see if a string is a hex string or not
+     * @param str String to check
+     * @returns boolean
+     */
     public static isHex(str: string | { [key: string]: string }) {
         if (typeof str === "string") return ((str.match(/[0-9"a-f]{1}/gi)?.length ?? 0) === str.length)
         let objKey = Object.entries(str)[0]
         return ((objKey[0].match(/[0-9a-f]{1}/gi)?.length ?? 0) === objKey[0].length)
     }
 
+    /**
+     * @internal Stringifys objects the correct way, and only does so if includeProp is true
+     * @param prop The prop to stringify
+     * @param includeProp Whether to stringify the prop, if false returns undefined
+     * @returns undefined if includeProp is false else returns a string
+     */
     private static _stringProp = (prop: any, includeProp: boolean): string => ((includeProp === true) ? (prop?.toString() !== "[object Object]" && typeof prop?.toString() === "string") ? prop.toString() : JSON.stringify(prop) : undefined)
+
+    /**
+     * Formats the path of files
+     * @param fPath The path of the file
+     * @param overwrite If false and the file exists the function will generate a random name for the file, else overwrites the file
+     * @returns fileName and path
+     */
     private static _serializePath(fPath: string | fs.PathLike, overwrite: boolean = false): { fileName: string, path: string } {
         fPath = fPath.toString()
         if (!fPath.startsWith(process.cwd())) fPath = path.join(process.cwd(), fPath)

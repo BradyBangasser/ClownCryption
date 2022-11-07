@@ -8,7 +8,7 @@
   },
   "main": "dist/index.js",
   "scripts": {
-    "build": "yarn tsup --dts && npx typedoc src/index.ts --name ClownCryption --excludeNotDocumented && node dist/index.js"
+    "build": "yarn tsup --dts && npx typedoc src/index.ts --options typedoc.json && node dist/index.js"
   },
   "devDependencies": {
     "@microsoft/tsdoc": "^0.14.2",

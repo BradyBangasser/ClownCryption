@@ -1,4 +1,4 @@
-import { ClownOptions, EncryptOptions, IEfficientBinaryCharset, IExportConfigOptions, IFileExportOptions, StaticEncryptOptions } from ".";
+import { ClownOptions, EncryptOptions, IExportConfigOptions, IFileExportOptions, StaticEncryptOptions } from ".";
 import CharsetManager from "./defaultCharsets/defaults";
 import Crypto from "crypto"
 import CFS from "./fileSystem";
@@ -11,15 +11,55 @@ import { PublicCharset } from "./defaultCharsets/charsets";
  */
 class ClownCryption {
 
+    /**
+     * The instance key, this is the default value for the {@link ClownCryption.encrypt | Encrypt Method} key
+     */
     #key: string
+
+    /**
+     * The instance charset, this is the default value for the {@link ClownCryption.encrypt | Encrypt Method} charset
+     * @extends PublicCharset
+     */
     private _charset: PublicCharset
-    private _encryptionAlgorithm: Crypto.CipherCCMTypes | Crypto.CipherGCMTypes | Crypto.CipherOCBTypes
+
+    /**
+     * The instance algorithm, this is the default value for the {@link ClownCryption.encrypt | Encrypt Method} algorithm
+     */
+    private _algorithm: Crypto.CipherCCMTypes | Crypto.CipherGCMTypes | Crypto.CipherOCBTypes
+
+    /**
+     * @hidden
+     * @privateRemark Needs some more work to implement
+     * The instance Common Replacers, these are the default value the {@link ClownCryption.encrypt | Encrypt Method} Common Replacers
+     */
     private _commonReplacers: [string, string][]
+
+    /**
+     * The instance salt, this is the default value for the {@link ClownCryption.encrypt | Encrypt Method} salt
+     */
     private _salt: string
+
+    /**
+     * The instance IV, this is the default value for the {@link ClownCryption.encrypt | Encrypt Method} IV
+     */
     private _iv: string
 
+    /**
+     * Manages the charsets
+     * @see {@link defaultCharsets.CharsetManager}
+     */
+    public readonly charsetMangager = CharsetManager
+
+    /**
+     * @hidden
+     * @privateRemark Common replacers
+     */
     private static readonly _commonReplacers: [string, string][] = [["100", "_"], ["110", "+"]]
 
+    /**
+     * Creates a new ClownCryption Instance
+     * @param options Options for the ClownCryption Constructor
+     */
     constructor({
         key,
         iv,
@@ -33,10 +73,16 @@ class ClownCryption {
         this._iv = iv
         this._salt = salt
         this._charset = this._getCharset(charset)
-        this._encryptionAlgorithm = algorithm
+        this._algorithm = algorithm
         this._commonReplacers = commonReplacers
     }
 
+    /**
+     * Fetches a CharsetManager
+     * @param charset {@link charsets.PublicCharset | Charset} or string
+     * @returns If a {@link charsets.PublicCharset | Charset} is provided it is returned else it tries to fetch the charset from the built in charsets
+     * @see {@link defaultCharsets.CharsetManager | Charset Manager}
+     */
     private _getCharset(charset: PublicCharset | string): PublicCharset {
         if (charset instanceof PublicCharset) return charset
         if (typeof charset === "string") {
@@ -48,9 +94,10 @@ class ClownCryption {
     }
 
     /**
-     * 
+     * Encrypts and Encodes a message
+     * @remarks The function uses the {@link https://nodejs.org/api/crypto.html#cryptocreatecipherivalgorithm-key-iv-options | Crypto.createCipheriv} function to encrypt a message and than than message is passed into the {@link charsets.PublicCharset.encode | encode} function, this creates a encrypted encoded message that is returned
      * @param {EncryptionOptions} options options for the encryption 
-     * @returns {string}
+     * @returns {string} The encrypted encoded message
      */
     public encrypt({
         message,
@@ -72,6 +119,12 @@ class ClownCryption {
         return ""
     }
 
+    /**
+     * Encrypts and Encodes a message
+     * @remark The function uses the {@link https://nodejs.org/api/crypto.html#cryptocreatecipherivalgorithm-key-iv-options | Crypto.createCipheriv} function to encrypt a message and than than message is passed into the {@link charsets.PublicCharset.encode | encode} function, this creates a encrypted encoded message that is returned
+     * @param options The options for the static encrypt function 
+     * @returns The encrypted encoded message
+     */
     public static encrypt({
         message,
         key,
@@ -91,9 +144,15 @@ class ClownCryption {
             console.error(err)
         }
 
-        return ""
+        return "" 
     }
 
+    /**
+     * Decodes and Decrypts the message
+     * @remarks The function passes the message into {@link charsets.PublicCharset.decode} and passes that result into the {@link https://nodejs.org/api/crypto.html#cryptocreatedecipherivalgorithm-key-iv-options | Crypto.createDecrypteriv} function and the result of that is returned
+     * @param options Options for the decrption
+     * @returns Decoded and Decrypted string
+     */
     public decrypt({
         message,
         key = this.key,
@@ -114,6 +173,12 @@ class ClownCryption {
         return ""
     }
 
+    /**
+     * Decodes and Decrypts the message
+     * @remarks The function passes the message into {@link charsets.PublicCharset.decode} and passes that result into the {@link https://nodejs.org/api/crypto.html#cryptocreatedecipherivalgorithm-key-iv-options | Crypto.createDecrypteriv} function and the result of that is returned
+     * @param options Options for the decrption
+     * @returns Decoded and Decrypted string
+     */
     public static decrypt({
         message,
         key,
@@ -136,30 +201,60 @@ class ClownCryption {
         return ""
     }
 
+    /**
+     * @returns The instance key
+     * @see {@link https://en.wikipedia.org/wiki/Key_(cryptography) | Key Cryptography Definition}
+     */
     public get key() {
         return this.#key
     }
 
+    /**
+     * @returns The instance IV
+     * @see {@link https://en.wikipedia.org/wiki/Initialization_vector | IV Cryptography Definition}
+     */
     public get iv() {
         return this._iv
     }
 
+    /**
+     * @returns The instance Charset
+     */
     public get charset() {
         return this._charset
     }
 
+    /**
+     * @returns The Instance salt
+     * @see {@link https://en.wikipedia.org/wiki/Salt_(cryptography) | Salt Cryptography Definition}
+     */
     public get salt() {
         return this._salt
     }
 
+    /**
+     * @returns The Instance Algorithm
+     * @see {@link https://www.openssl.org/docs/man1.1.1/man1/ciphers.html | OpenSSL Ciphers}
+     */
     public get algorithm() {
-        return this._encryptionAlgorithm
+        return this._algorithm
     }
 
+    /**
+     * @returns The Instance Common Replacers
+     */
     public get commonReplacers() {
         return this._commonReplacers
     }
 
+    /**
+     * Exports a message to a file
+     * @param encryptedString The message to export
+     * @param options The export options
+     * @returns Path of the exported file
+     * @see {@link CFS.generateStringFile}
+     * @see {@link ClownCryption.importStringFile}
+     */
     public exportStringToFile(encryptedString: string, {
         fileName,
         filePath,
@@ -198,15 +293,35 @@ class ClownCryption {
         })
     }
 
+    /**
+     * Imports a message from a file
+     * @param filePath Path to the file
+     * @param key Encryption key
+     * @returns Content of the file
+     * @see {@link CFS.readStringFile}
+     * @see {@link ClownCryption.exportStringToFile}
+     */
     public importStringFile(filePath: string, key?: string) {
         return CFS.readStringFile(filePath, key)
     }
 
+    /**
+     * Exports the configuration of the instance
+     * @param fileName Path to the file
+     * @param options Options of the export
+     * @returns Path of the export file
+     * @see {@link CFS.exportConfig}
+     */
     public exportConfigToFile(fileName: string, options: IExportConfigOptions) {
         return CFS.exportConfig(fileName, this, options)
     }
 
-    // static methods
+    /**
+     * Condenses Binary
+     * @param binaryString A string in binary
+     * @returns Condensed Binary
+     * @see {@link ClownCryption.decondenseBinary}
+     */
     static condenseBinary(binaryString: string) {
         let count = 0
         let lastChar = ""
@@ -273,6 +388,12 @@ class ClownCryption {
         return efficientBuilder
     }
 
+    /**
+     * Decondenses Binary
+     * @param condensedBinary Condensed Binary String 
+     * @returns Decondensed String
+     * @see {@link ClownCryption.condenseBinary}
+     */
     static decondenseBinary(condensedBinary: string) {
         let buildString = ""
         if (condensedBinary.includes(":")) {
@@ -303,6 +424,13 @@ class ClownCryption {
         return buildString + buildString[buildString.length - 1]
     }
 
+    /**
+     * Finds patterns in a string
+     * @param str The string to search
+     * @param maxPatternSize The maximum length of the pattern
+     * @param minPatternSize  The minimum length of the pattern
+     * @returns A list of patterns as [pattern, amount] ordered high to low count, all patterns will be the same length
+     */
     static findPattern(str: string, maxPatternSize: number = 4, minPatternSize: number = 3) {
         let patterns: { [key: string]: number } = {}
 
@@ -317,10 +445,16 @@ class ClownCryption {
         return Object.entries(patterns).sort((a, b) => (b[1] * b[0].length) - (a[1] * a[0].length)).filter((value, index, array) => value[1] > 1 && value[0].length === array[0][0].length)
     }
 
-    static importFileConfig(fileName: string, key?: string) {
-        const config = CFS.readFileConfig(fileName, key)
+    /**
+     * Creates a new ClownCryption instance based on a configuration file
+     * @param filePath The import file's path
+     * @param key The encryption key
+     * @returns New ClownCryption instance
+     * @see {@link ClownCryption.exportConfigToFile}
+     */
+    static importFileConfig(filePath: string, key?: string) {
+        const config = CFS.readFileConfig(filePath, key)
 
-        console.log(BaseCharset.importCharset(config.charset))
         return new this({
             key: config.key,
             iv: config.iv,
@@ -329,6 +463,11 @@ class ClownCryption {
         } as any)
     }
 
+    /**
+     * Gets the binary value of a string
+     * @param str The string
+     * @returns The string encoded in binary
+     */
     static getBinary(str: string) {
         const strSplit = str.split("")
         const builder: string[] = []
@@ -340,6 +479,12 @@ class ClownCryption {
         return builder.join(" ")
     }
 
+    /**
+     * Repeats a string a specified number of times and returns it
+     * @param str The string
+     * @param num The amount of times to repeat it
+     * @returns The new string
+     */
     static multiplyString(str: string, num: number) {
         let builder = ""
         for (let i = 0; i <= num; i++) {

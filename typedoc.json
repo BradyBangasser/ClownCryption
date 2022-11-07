@@ -1,0 +1,12 @@
+{
+    "name": "ClownCryption",
+    "hideGenerator": true,
+    "externalSymbolLinkMappings": {
+        "global": {
+            "string": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String"
+        },
+        "typescript": {
+            "string": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String"
+        }
+    }
+}

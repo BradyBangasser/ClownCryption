@@ -1,12 +1,39 @@
-import { CharsetMode, CharsetType, IBinaryCharset, IEfficientBinaryCharset, ILiteralCharset } from "..";
-import constants from "../constants";
+import { IBinaryCharset, IEfficientBinaryCharset, ILiteralCharset } from "..";
 import BaseCharset from "./baseCharset";
 
-export abstract class PublicCharset extends BaseCharset {
+/**
+ * Charset Template
+ * @remarks This class is ment to be extended and create subclasses for charsets
+ */
+abstract class PublicCharset extends BaseCharset {
+
+    /** Name of the Charset */
     public readonly name: string
+    /** The aliases of the charset */
     public readonly aliases: string[]
+
+    /**
+     * Creates an Efficient Binary Charset
+     * @param name Name of the charset
+     * @param charset The charset characters 
+     * @param aliases The aliases of the charset
+     */
     constructor(name: string, charset: IEfficientBinaryCharset, aliases?: string | string[])
+
+    /**
+     * Creates a Binary Charset
+     * @param name The name of the charset
+     * @param charset The charset characters
+     * @param aliases The aliases of the charset
+     */
     constructor(name: string, charset: IBinaryCharset, aliases?: string | string[])
+
+    /**
+     * Creates a Literal Charset
+     * @param name Name of the charset
+     * @param charset The charset characters
+     * @param aliases The aliases of the charset
+     */
     constructor(name: string, charset: ILiteralCharset, aliases?: string | string[])
     constructor(name: string, charset: IEfficientBinaryCharset | IBinaryCharset | ILiteralCharset, aliases: string | string[] = []) {
         if ("a" in charset) super("literal", "normal", charset)
@@ -18,12 +45,14 @@ export abstract class PublicCharset extends BaseCharset {
     }
 }
 
+/** Creates an Efficient Binary Charset */
 class EfficientBinaryCharset extends PublicCharset {
     constructor(name: string, chars: IEfficientBinaryCharset, aliases?: string | string[]) {
         super(name, chars, aliases)
     }
 }
 
+/** Creates a Binary Charset */
 class BinaryCharset extends PublicCharset {
     constructor(name: string, chars: { 0: string, 1: string } | { "0": string, "1": string }, aliases?: string | string[]) {
         super(name, {
@@ -33,10 +62,11 @@ class BinaryCharset extends PublicCharset {
     }
 }
 
+/** Creates a Literal Charset */
 class LiteralCharset extends PublicCharset {
     constructor(name: string, chars: ILiteralCharset, aliases?: string | string[]) {
         super(name, chars, aliases)
     }
 }
 
-export { EfficientBinaryCharset, BinaryCharset, LiteralCharset }
+export { EfficientBinaryCharset, BinaryCharset, LiteralCharset, PublicCharset }

@@ -7,6 +7,10 @@ var __require = /* @__PURE__ */ ((x) => typeof require !== "undefined" ? require
     return require.apply(this, arguments);
   throw new Error('Dynamic require of "' + x + '" is not supported');
 });
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
 var __publicField = (obj, key, value) => {
   __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
   return value;
@@ -30,12 +34,24 @@ var __privateSet = (obj, member, value, setter) => {
   return value;
 };
 
-// src/errors.ts
-var UnknownCharError = class extends Error {
-  constructor(string, index) {
-    super(`Unknown character "${string[index]}" in ${string} at index ${index}`);
-  }
-};
+// src/defaultCharsets/defaults.ts
+var defaults_exports = {};
+__export(defaults_exports, {
+  CharsetManager: () => CharsetManager,
+  DefaultBinaryCharset: () => DefaultBinaryCharset,
+  DefaultEfficientBinaryCharset: () => DefaultEfficientBinaryCharset,
+  DefaultLiteralCharset: () => DefaultLiteralCharset,
+  default: () => defaults_default
+});
+
+// src/defaultCharsets/charsets.ts
+var charsets_exports = {};
+__export(charsets_exports, {
+  BinaryCharset: () => BinaryCharset,
+  EfficientBinaryCharset: () => EfficientBinaryCharset,
+  LiteralCharset: () => LiteralCharset,
+  PublicCharset: () => PublicCharset
+});
 
 // src/defaultCharsets/baseCharset.ts
 var BaseCharset = class {
@@ -54,20 +70,6 @@ var BaseCharset = class {
   }
   get charset() {
     return this._charset;
-  }
-  apply(str) {
-    const strBuilder = [];
-    str.split("").forEach((character, index) => {
-      const newChar = this._charsetMap.get(character);
-      if (typeof newChar !== "string") {
-        const error = new UnknownCharError(str, index);
-        if (typeof this._charsetMap.get("unknown") === "undefined")
-          throw error;
-        console.warn(error.message);
-        return strBuilder.push(this._charsetMap.get("unknown"));
-      }
-      strBuilder.push(newChar);
-    });
   }
   _createCharsetMap(charset) {
     Object.entries(charset).forEach((character) => {
@@ -313,6 +315,8 @@ var constants_default = constants;
 
 // src/fileSystem.ts
 var _CFS = class {
+  constructor() {
+  }
   static generateStringFile(str, {
     fileName,
     filePath,
@@ -355,14 +359,14 @@ var _CFS = class {
     fs.writeFileSync(`${fPath}.${exportType}`, JSON.stringify(builder, null, includeWhiteSpace === true ? "	" : ""));
     return `${fPath}.${exportType}`;
   }
-  static readStringFile(filePath, key, options) {
+  static readStringFile(filePath, key, importByFileContent = false) {
     let fileContent;
-    if (typeof filePath === "string" && (options == null ? void 0 : options.importByFileContent) === false) {
+    if (typeof filePath === "string" && importByFileContent === false) {
       filePath = this._serializePath(filePath).path;
       if (path.extname(filePath.toString()) === ".js")
         return this._importFromJS(filePath);
     }
-    if ((options == null ? void 0 : options.importByFileContent) === true)
+    if (importByFileContent === true)
       fileContent = filePath;
     else {
       if (!filePath.startsWith(process.cwd()))
@@ -536,15 +540,16 @@ var _ClownCryption = class {
   }) {
     __privateAdd(this, _key, void 0);
     __publicField(this, "_charset");
-    __publicField(this, "_encryptionAlgorithm");
+    __publicField(this, "_algorithm");
     __publicField(this, "_commonReplacers");
     __publicField(this, "_salt");
     __publicField(this, "_iv");
+    __publicField(this, "charsetMangager", defaults_default);
     __privateSet(this, _key, key);
     this._iv = iv;
     this._salt = salt;
     this._charset = this._getCharset(charset);
-    this._encryptionAlgorithm = algorithm;
+    this._algorithm = algorithm;
     this._commonReplacers = commonReplacers;
   }
   _getCharset(charset) {
@@ -642,7 +647,7 @@ var _ClownCryption = class {
     return this._salt;
   }
   get algorithm() {
-    return this._encryptionAlgorithm;
+    return this._algorithm;
   }
   get commonReplacers() {
     return this._commonReplacers;
@@ -782,9 +787,8 @@ var _ClownCryption = class {
     }
     return Object.entries(patterns).sort((a, b) => b[1] * b[0].length - a[1] * a[0].length).filter((value, index, array) => value[1] > 1 && value[0].length === array[0][0].length);
   }
-  static importFileConfig(fileName, key) {
-    const config = fileSystem_default.readFileConfig(fileName, key);
-    console.log(baseCharset_default.importCharset(config.charset));
+  static importFileConfig(filePath, key) {
+    const config = fileSystem_default.readFileConfig(filePath, key);
     return new this({
       key: config.key,
       iv: config.iv,
@@ -818,5 +822,7 @@ var src_default = clowncryption_default;
 export {
   fileSystem_default as CFS,
   clowncryption_default as ClownCryption,
-  src_default as default
+  charsets_exports as charsets,
+  src_default as default,
+  defaults_exports as defaultCharsets
 };
