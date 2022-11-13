@@ -1,17 +1,30 @@
 {
   "name": "clowncryption",
   "packageManager": "yarn@3.2.0",
-  "dependencies": {
-    "@types/node": "^18.8.5",
-    "tsup": "^6.2.3",
-    "typescript": "^4.8.4"
-  },
-  "main": "dist/index.js",
+  "version": "2.0.0",
+  "main": "./dist/index.js",
   "scripts": {
-    "build": "yarn tsup --dts && npx typedoc src/index.ts --options typedoc.json && node dist/index.js"
+    "build": "yarn prettier --write ./src && yarn tsup --dts && npx typedoc src/index.ts --options typedoc.json",
+    "BND": "yarn tsup --dts"
   },
   "devDependencies": {
-    "@microsoft/tsdoc": "^0.14.2",
-    "typedoc": "^0.23.20"
+    "@types/node": "^18.7.18",
+    "prettier": "^2.7.1",
+    "tsup": "^6.4.0",
+    "typedoc": "^0.23.20",
+    "typescript": "^4.8.3"
+  },
+  "author": "Brady Bangasser",
+  "license": "MIT",
+  "typings": "./dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/BradyBangasser/ClownCryption"
+  },
+  "readme": "./README.md",
+  "homepage": "https://clowncryption.bangasser.dev",
+  "exports": {
+    "import": "./dist/index.mjs",
+    "require": "./dist/index.js"
   }
 }

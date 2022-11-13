@@ -23,7 +23,7 @@
 <ul class="tsd-hierarchy">
 <li><span class="target">IFileExportOptions</span></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/BradyBangasser/ClownCryption/blob/e41e932/src/index.ts#L286">index.ts:286</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/BradyBangasser/ClownCryption/blob/36c6478/src/index.ts#L295">index.ts:295</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-index-accordion" open><summary class="tsd-accordion-summary tsd-index-summary">
@@ -54,7 +54,7 @@
 <h2>Properties</h2>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface"><a id="algorithm" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagOptional">Optional</code> <span>algorithm</span><a href="#algorithm" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" id="icon-anchor-a"></path><path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" id="icon-anchor-b"></path><path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" id="icon-anchor-c"></path></svg></a></h3>
-<div class="tsd-signature">algorithm<span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">CipherCCMTypes</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">CipherGCMTypes</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">CipherOCBTypes</span></div>
+<div class="tsd-signature">algorithm<span class="tsd-signature-symbol">?:</span> <a href="../types/Algorithms.html" class="tsd-signature-type" data-tsd-kind="Type alias">Algorithms</a></div>
 <div class="tsd-comment tsd-typography"><p>The exported algorithm,
 The algorithm is only exported if <a href="IFileExportOptions.html#includeAlgorithm">includeAlgorithm</a> is set to true</p>
 
@@ -63,7 +63,7 @@ The algorithm is only exported if <a href="IFileExportOptions.html#includeAlgori
 <h3>See</h3><p><a href="https://www.openssl.org/docs/man1.1.1/man1/ciphers.html">OpenSSL Ciphers</a></p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/BradyBangasser/ClownCryption/blob/e41e932/src/index.ts#L356">index.ts:356</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/BradyBangasser/ClownCryption/blob/36c6478/src/index.ts#L365">index.ts:365</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface"><a id="charset" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagOptional">Optional</code> <span>charset</span><a href="#charset" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">charset<span class="tsd-signature-symbol">?:</span> <a href="../classes/charsets.PublicCharset.html" class="tsd-signature-type" data-tsd-kind="Class">PublicCharset</a></div>
@@ -73,7 +73,7 @@ The charset is only exported if <a href="IFileExportOptions.html#includeCharset"
 <h3>Default Value</h3><p><a href="../classes/ClownCryption.html#_charset">ClownCryption Instance Charset</a></p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/BradyBangasser/ClownCryption/blob/e41e932/src/index.ts#L383">index.ts:383</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/BradyBangasser/ClownCryption/blob/36c6478/src/index.ts#L392">index.ts:392</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface"><a id="commonReplacers" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagOptional">Optional</code> <span>common<wbr/>Replacers</span><a href="#commonReplacers" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">common<wbr/>Replacers<span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">[]</span></div>
@@ -83,17 +83,17 @@ The Common Replacers are only exported if <a href="IFileExportOptions.html#inclu
 <h3>Default Value</h3><p><a href="../classes/ClownCryption.html#commonReplacers">ClownCryption Instance Common Replacers</a></p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/BradyBangasser/ClownCryption/blob/e41e932/src/index.ts#L396">index.ts:396</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/BradyBangasser/ClownCryption/blob/36c6478/src/index.ts#L405">index.ts:405</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface"><a id="encryptFile" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagOptional">Optional</code> <span>encrypt<wbr/>File</span><a href="#encryptFile" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">encrypt<wbr/>File<span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span></div>
-<div class="tsd-comment tsd-typography"><p>Whether to encrypt the export file or not, 
+<div class="tsd-comment tsd-typography"><p>Whether to encrypt the export file or not,
 If a string is provided that string is used as the key of the encryption, not available for js export type</p>
 
 <h3>Default Value</h3><p>false</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/BradyBangasser/ClownCryption/blob/e41e932/src/index.ts#L314">index.ts:314</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/BradyBangasser/ClownCryption/blob/36c6478/src/index.ts#L323">index.ts:323</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface"><a id="exportType" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagOptional">Optional</code> <span>export<wbr/>Type</span><a href="#exportType" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">export<wbr/>Type<span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">&quot;clown&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;json&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;js&quot;</span></div>
@@ -102,21 +102,21 @@ If a string is provided that string is used as the key of the encryption, not av
 <h3>Default Value</h3><p>clown</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/BradyBangasser/ClownCryption/blob/e41e932/src/index.ts#L307">index.ts:307</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/BradyBangasser/ClownCryption/blob/36c6478/src/index.ts#L316">index.ts:316</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface"><a id="fileName" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>file<wbr/>Name</span><a href="#fileName" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">file<wbr/>Name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 <div class="tsd-comment tsd-typography"><p>The name of the file the export will be written to</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/BradyBangasser/ClownCryption/blob/e41e932/src/index.ts#L290">index.ts:290</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/BradyBangasser/ClownCryption/blob/36c6478/src/index.ts#L299">index.ts:299</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface"><a id="filePath" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagOptional">Optional</code> <span>file<wbr/>Path</span><a href="#filePath" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">file<wbr/>Path<span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span></div>
 <div class="tsd-comment tsd-typography"><p>The path to the file the exprot will be written to, if the fileName and the end of the filePath don&#39;t match up the fileName will be added onto the end of the filePath</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/BradyBangasser/ClownCryption/blob/e41e932/src/index.ts#L295">index.ts:295</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/BradyBangasser/ClownCryption/blob/36c6478/src/index.ts#L304">index.ts:304</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface"><a id="includeAlgorithm" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagOptional">Optional</code> <span>include<wbr/>Algorithm</span><a href="#includeAlgorithm" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">include<wbr/>Algorithm<span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span></div>
@@ -125,7 +125,7 @@ If a string is provided that string is used as the key of the encryption, not av
 <h3>Default Value</h3><p>false</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/BradyBangasser/ClownCryption/blob/e41e932/src/index.ts#L362">index.ts:362</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/BradyBangasser/ClownCryption/blob/36c6478/src/index.ts#L371">index.ts:371</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface"><a id="includeCharset" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagOptional">Optional</code> <span>include<wbr/>Charset</span><a href="#includeCharset" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">include<wbr/>Charset<span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span></div>
@@ -134,7 +134,7 @@ If a string is provided that string is used as the key of the encryption, not av
 <h3>Default Value</h3><p>false</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/BradyBangasser/ClownCryption/blob/e41e932/src/index.ts#L389">index.ts:389</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/BradyBangasser/ClownCryption/blob/36c6478/src/index.ts#L398">index.ts:398</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface"><a id="includeCommonReplacers" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagOptional">Optional</code> <span>include<wbr/>Common<wbr/>Replacers</span><a href="#includeCommonReplacers" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">include<wbr/>Common<wbr/>Replacers<span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span></div>
@@ -143,7 +143,7 @@ If a string is provided that string is used as the key of the encryption, not av
 <h3>Default Value</h3><p>false</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/BradyBangasser/ClownCryption/blob/e41e932/src/index.ts#L402">index.ts:402</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/BradyBangasser/ClownCryption/blob/36c6478/src/index.ts#L411">index.ts:411</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface"><a id="includeIv" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagOptional">Optional</code> <span>include<wbr/>Iv</span><a href="#includeIv" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">include<wbr/>Iv<span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span></div>
@@ -152,7 +152,7 @@ If a string is provided that string is used as the key of the encryption, not av
 <h3>Default Value</h3><p>false</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/BradyBangasser/ClownCryption/blob/e41e932/src/index.ts#L348">index.ts:348</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/BradyBangasser/ClownCryption/blob/36c6478/src/index.ts#L357">index.ts:357</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface"><a id="includeKey" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagOptional">Optional</code> <span>include<wbr/>Key</span><a href="#includeKey" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">include<wbr/>Key<span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span></div>
@@ -161,7 +161,7 @@ If a string is provided that string is used as the key of the encryption, not av
 <h3>Default Value</h3><p>false</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/BradyBangasser/ClownCryption/blob/e41e932/src/index.ts#L334">index.ts:334</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/BradyBangasser/ClownCryption/blob/36c6478/src/index.ts#L343">index.ts:343</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface"><a id="includeSalt" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagOptional">Optional</code> <span>include<wbr/>Salt</span><a href="#includeSalt" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">include<wbr/>Salt<span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span></div>
@@ -170,7 +170,7 @@ If a string is provided that string is used as the key of the encryption, not av
 <h3>Default Value</h3><p>false</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/BradyBangasser/ClownCryption/blob/e41e932/src/index.ts#L376">index.ts:376</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/BradyBangasser/ClownCryption/blob/36c6478/src/index.ts#L385">index.ts:385</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface"><a id="includeWhiteSpace" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagOptional">Optional</code> <span>include<wbr/>White<wbr/>Space</span><a href="#includeWhiteSpace" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">include<wbr/>White<wbr/>Space<span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span></div>
@@ -180,7 +180,7 @@ Only used when <a href="IFileExportOptions.html#exportType">Export Type</a> is j
 <h3>Default Value</h3><p>false</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/BradyBangasser/ClownCryption/blob/e41e932/src/index.ts#L409">index.ts:409</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/BradyBangasser/ClownCryption/blob/36c6478/src/index.ts#L418">index.ts:418</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface"><a id="iv" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagOptional">Optional</code> <span>iv</span><a href="#iv" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">iv<span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span></div>
@@ -192,7 +192,7 @@ The IV is only exported if <a href="IFileExportOptions.html#includeIv">includeIv
 <h3>See</h3><p><a href="https://en.wikipedia.org/wiki/Initialization_vector">IV Cryptography Definition</a></p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/BradyBangasser/ClownCryption/blob/e41e932/src/index.ts#L342">index.ts:342</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/BradyBangasser/ClownCryption/blob/36c6478/src/index.ts#L351">index.ts:351</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface"><a id="key" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagOptional">Optional</code> <span>key</span><a href="#key" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">key<span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span></div>
@@ -204,7 +204,7 @@ The key is only exported if <a href="IFileExportOptions.html#includeKey">include
 <h3>See</h3><p><a href="https://en.wikipedia.org/wiki/Key_(cryptography)">Key Cryptography Definition</a></p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/BradyBangasser/ClownCryption/blob/e41e932/src/index.ts#L328">index.ts:328</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/BradyBangasser/ClownCryption/blob/36c6478/src/index.ts#L337">index.ts:337</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface"><a id="overwrite" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagOptional">Optional</code> <span>overwrite</span><a href="#overwrite" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">overwrite<span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span></div>
@@ -213,7 +213,7 @@ The key is only exported if <a href="IFileExportOptions.html#includeKey">include
 <h3>Default Value</h3><p>false</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/BradyBangasser/ClownCryption/blob/e41e932/src/index.ts#L301">index.ts:301</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/BradyBangasser/ClownCryption/blob/36c6478/src/index.ts#L310">index.ts:310</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface"><a id="salt" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagOptional">Optional</code> <span>salt</span><a href="#salt" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">salt<span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span></div>
@@ -225,7 +225,7 @@ The salt is only exported if <a href="IFileExportOptions.html#includeSalt">inclu
 <h3>See</h3><p><a href="https://en.wikipedia.org/wiki/Salt_(cryptography)">Salt Cryptography Definition</a></p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/BradyBangasser/ClownCryption/blob/e41e932/src/index.ts#L370">index.ts:370</a></li></ul></aside></section></section></div>
+<li>Defined in <a href="https://github.com/BradyBangasser/ClownCryption/blob/36c6478/src/index.ts#L379">index.ts:379</a></li></ul></aside></section></section></div>
 <div class="col-4 col-menu menu-sticky-wrap menu-highlight">
 <div class="tsd-navigation settings">
 <details class="tsd-index-accordion"><summary class="tsd-accordion-summary">

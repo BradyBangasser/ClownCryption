@@ -23,7 +23,7 @@
 <ul class="tsd-hierarchy">
 <li><span class="target">StaticEncryptOptions</span></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/BradyBangasser/ClownCryption/blob/e41e932/src/index.ts#L111">index.ts:111</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/BradyBangasser/ClownCryption/blob/36c6478/src/index.ts#L120">index.ts:120</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-index-accordion" open><summary class="tsd-accordion-summary tsd-index-summary">
@@ -42,18 +42,18 @@
 <h2>Properties</h2>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface"><a id="algorithm" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagOptional">Optional</code> <span>algorithm</span><a href="#algorithm" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" id="icon-anchor-a"></path><path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" id="icon-anchor-b"></path><path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" id="icon-anchor-c"></path></svg></a></h3>
-<div class="tsd-signature">algorithm<span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">CipherCCMTypes</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">CipherGCMTypes</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">CipherOCBTypes</span></div>
+<div class="tsd-signature">algorithm<span class="tsd-signature-symbol">?:</span> <a href="../types/Algorithms.html" class="tsd-signature-type" data-tsd-kind="Type alias">Algorithms</a></div>
 <div class="tsd-comment tsd-typography"><p>The algorithm used to encrypt the message</p>
 
-<h3>Default Value</h3><p>aes-192-cbc</p>
+<h3>Default Value</h3><p>aes192</p>
 
 <h3>See</h3><p><a href="https://www.openssl.org/docs/man1.1.1/man1/ciphers.html">OpenSSL Ciphers</a></p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/BradyBangasser/ClownCryption/blob/e41e932/src/index.ts#L141">index.ts:141</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/BradyBangasser/ClownCryption/blob/36c6478/src/index.ts#L150">index.ts:150</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface"><a id="charset" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagOptional">Optional</code> <span>charset</span><a href="#charset" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
-<div class="tsd-signature">charset<span class="tsd-signature-symbol">?:</span> <a href="../classes/charsets.PublicCharset.html" class="tsd-signature-type" data-tsd-kind="Class">PublicCharset</a></div>
+<div class="tsd-signature">charset<span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="../classes/charsets.PublicCharset.html" class="tsd-signature-type" data-tsd-kind="Class">PublicCharset</a></div>
 <div class="tsd-comment tsd-typography"><p>The charset used to encode the encrypted message</p>
 
 <h3>Default Value</h3><p><a href="../variables/defaultCharsets.DefaultEfficientBinaryCharset.html">Default Efficient Binary Charset</a></p>
@@ -61,7 +61,7 @@
 <h3>See</h3><p><a href="../classes/charsets.PublicCharset.html">PublicCharset</a></p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/BradyBangasser/ClownCryption/blob/e41e932/src/index.ts#L148">index.ts:148</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/BradyBangasser/ClownCryption/blob/36c6478/src/index.ts#L157">index.ts:157</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface"><a id="iv" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>iv</span><a href="#iv" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">iv<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
@@ -70,7 +70,7 @@
 <h3>See</h3><p><a href="https://en.wikipedia.org/wiki/Initialization_vector">IV Cryptography Definition</a></p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/BradyBangasser/ClownCryption/blob/e41e932/src/index.ts#L127">index.ts:127</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/BradyBangasser/ClownCryption/blob/36c6478/src/index.ts#L136">index.ts:136</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface"><a id="key" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>key</span><a href="#key" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">key<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
@@ -79,14 +79,14 @@
 <h3>See</h3><p><a href="https://en.wikipedia.org/wiki/Key_(cryptography)">Key Cryptography Definition</a></p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/BradyBangasser/ClownCryption/blob/e41e932/src/index.ts#L121">index.ts:121</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/BradyBangasser/ClownCryption/blob/36c6478/src/index.ts#L130">index.ts:130</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface"><a id="message" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>message</span><a href="#message" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">message<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 <div class="tsd-comment tsd-typography"><p>The message to be encrypted or decrypted</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/BradyBangasser/ClownCryption/blob/e41e932/src/index.ts#L115">index.ts:115</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/BradyBangasser/ClownCryption/blob/36c6478/src/index.ts#L124">index.ts:124</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface"><a id="salt" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagOptional">Optional</code> <span>salt</span><a href="#salt" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">salt<span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span></div>
@@ -97,7 +97,7 @@
 <h3>See</h3><p><a href="https://en.wikipedia.org/wiki/Salt_(cryptography)">Salt Cryptography Definition</a></p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/BradyBangasser/ClownCryption/blob/e41e932/src/index.ts#L134">index.ts:134</a></li></ul></aside></section></section></div>
+<li>Defined in <a href="https://github.com/BradyBangasser/ClownCryption/blob/36c6478/src/index.ts#L143">index.ts:143</a></li></ul></aside></section></section></div>
 <div class="col-4 col-menu menu-sticky-wrap menu-highlight">
 <div class="tsd-navigation settings">
 <details class="tsd-index-accordion"><summary class="tsd-accordion-summary">

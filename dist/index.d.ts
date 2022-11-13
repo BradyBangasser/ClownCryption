@@ -1,4 +1,4 @@
-import Crypto from 'crypto';
+import * as fs from 'fs';
 
 /**
  * @internal
@@ -46,11 +46,6 @@ declare abstract class BaseCharset {
      */
     getChar(character: string | number): string | undefined;
     /**
-     * @hidden
-     * @privateRemark Not implemented yet
-     */
-    private _encodeHybird;
-    /**
      * Encodes a binry string
      * @param str The string
      * @returns Encoded binary string
@@ -62,6 +57,19 @@ declare abstract class BaseCharset {
      * @returns The encoded string
      */
     private _encodeLiteral;
+    validChars(str: string): boolean;
+    /**
+     * Returns all emojis in a string
+     * @param str The string
+     * @returns An array of emojis
+     */
+    static getStringEmojis(str: string): string[];
+    /**
+     * This check to see if a character or string is all emojis
+     * @param char The string or character
+     * @returns true if all character in char are emojis, else false
+     */
+    static isEmoji(char: string): boolean;
     /**
      * String to decode to binary
      * @param str String
@@ -185,38 +193,38 @@ declare const DefaultBinaryCharset: BinaryCharset;
  * @chars
  * * 0: 🤡
  * * 1: 🤓
- * * 2: 🗿
- * * 3: 🤨
- * * 4: 😐
- * * 5: 😏
- * * 6: 🤯
- * * 7: 🥸
- * * 8: 🥴
- * * 9: 🤯
- * * .: 📮
- * * :: ☭
- * * Common Replacer 1: 💩
- * * Common Replacer 2: 👨‍🦯
+ * * 2: 🫁
+ * * 3: 🤯
+ * * 4: 📮
+ * * 5: 🐄
+ * * 6: 🗿
+ * * 7: 💩
+ * * 8: 🤠
+ * * 9: 🥴
+ * * .: 😐
+ * * :: 😏
+ * * Common Replacer 1: 🤯
+ * * Common Replacer 2: 🥛
  */
 declare const DefaultEfficientBinaryCharset: EfficientBinaryCharset;
 /**
  * The Default Literal Charset
  * @chars
- * * a: 🤡
- * * b: 🤓
+ * * a: 🥸
+ * * b: 🥛
  * * c: 🗿
  * * d: 🤨
  * * e: 😐
  * * f: 😏
- * * 0: 🤯
- * * 1: 🥸
+ * * 0: 🤡
+ * * 1: 🤓
  * * 2: 🫁
  * * 3: 🤯
  * * 4: 📮
- * * 5: ☭
+ * * 5: 🐄
  * * 6: 🥌
  * * 7: 💩
- * * 8: 👨‍🦯
+ * * 8: 🤠
  * * 9: 🥴
  */
 declare const DefaultLiteralCharset: LiteralCharset;
@@ -312,42 +320,64 @@ declare class ClownCryption {
      * Creates a new ClownCryption Instance
      * @param options Options for the ClownCryption Constructor
      */
-    constructor({ key, iv, salt, charset, algorithm, commonReplacers }: ClownOptions);
+    constructor({ key, iv, salt, charset, algorithm, commonReplacers, }: ClownOptions);
     /**
      * Fetches a CharsetManager
      * @param charset {@link charsets.PublicCharset | Charset} or string
      * @returns If a {@link charsets.PublicCharset | Charset} is provided it is returned else it tries to fetch the charset from the built in charsets
      * @see {@link defaultCharsets.CharsetManager | Charset Manager}
      */
-    private _getCharset;
+    private static _getCharset;
+    /**
+     * Encrypts a string with the AES algorithm
+     * @param str The string to encrypt
+     * @param key The key to encrypt the string with
+     * @param iv The Initalizing Vector of the encryption function
+     * @param keylen Basically just saying aes128, aes192, or aes256, note that the str param doesn't have to be thing length
+     * @param salt The salt for the encryption
+     * @param log If you want to log the errors from the encryption algorithm
+     * @returns encrypted string or and empty string if there is an error
+     */
+    static aesEncrypt(str: string, key: string, iv: string, keylen?: 128 | 192 | 256, salt?: string, log?: boolean): string;
+    /**
+     *
+     * @param str The Encrypted string to decrypt
+     * @param key The key to decrypt the string with
+     * @param iv The Initalizing Vector for the algorithm
+     * @param keylen Basically just saying aes128, aes192, or aes256, note that the str param doesn't have to be thing length
+     * @param salt The salt for the algorithm
+     * @param log If you want to log the errors from the decrypt
+     * @returns Decrypted string
+     */
+    static aesDecrypt(str: string, key: string, iv: string, keylen?: 128 | 192 | 256, salt?: string, log?: boolean): string;
     /**
      * Encrypts and Encodes a message
      * @remarks The function uses the {@link https://nodejs.org/api/crypto.html#cryptocreatecipherivalgorithm-key-iv-options | Crypto.createCipheriv} function to encrypt a message and than than message is passed into the {@link charsets.PublicCharset.encode | encode} function, this creates a encrypted encoded message that is returned
      * @param {EncryptionOptions} options options for the encryption
      * @returns {string} The encrypted encoded message
      */
-    encrypt({ message, key, iv, charset, algorithm, salt }: EncryptOptions): string;
+    encrypt({ message, key, iv, charset, algorithm, salt, }: EncryptOptions): string;
     /**
      * Encrypts and Encodes a message
      * @remark The function uses the {@link https://nodejs.org/api/crypto.html#cryptocreatecipherivalgorithm-key-iv-options | Crypto.createCipheriv} function to encrypt a message and than than message is passed into the {@link charsets.PublicCharset.encode | encode} function, this creates a encrypted encoded message that is returned
      * @param options The options for the static encrypt function
      * @returns The encrypted encoded message
      */
-    static encrypt({ message, key, iv, charset, algorithm, salt }: StaticEncryptOptions): string;
+    static encrypt({ message, key, iv, charset, algorithm, salt, }: StaticEncryptOptions): string;
     /**
      * Decodes and Decrypts the message
      * @remarks The function passes the message into {@link charsets.PublicCharset.decode} and passes that result into the {@link https://nodejs.org/api/crypto.html#cryptocreatedecipherivalgorithm-key-iv-options | Crypto.createDecrypteriv} function and the result of that is returned
      * @param options Options for the decrption
      * @returns Decoded and Decrypted string
      */
-    decrypt({ message, key, iv, salt, algorithm, charset }: EncryptOptions): string;
+    decrypt({ message, key, iv, salt, algorithm, charset, }: EncryptOptions): string;
     /**
      * Decodes and Decrypts the message
      * @remarks The function passes the message into {@link charsets.PublicCharset.decode} and passes that result into the {@link https://nodejs.org/api/crypto.html#cryptocreatedecipherivalgorithm-key-iv-options | Crypto.createDecrypteriv} function and the result of that is returned
      * @param options Options for the decrption
      * @returns Decoded and Decrypted string
      */
-    static decrypt({ message, key, iv, charset, algorithm, salt }: StaticEncryptOptions): string;
+    static decrypt({ message, key, iv, charset, algorithm, salt, }: StaticEncryptOptions): string;
     /**
      * @returns The instance key
      * @see {@link https://en.wikipedia.org/wiki/Key_(cryptography) | Key Cryptography Definition}
@@ -371,7 +401,7 @@ declare class ClownCryption {
      * @returns The Instance Algorithm
      * @see {@link https://www.openssl.org/docs/man1.1.1/man1/ciphers.html | OpenSSL Ciphers}
      */
-    get algorithm(): Crypto.CipherCCMTypes | Crypto.CipherGCMTypes | Crypto.CipherOCBTypes;
+    get algorithm(): Algorithms;
     /**
      * @returns The Instance Common Replacers
      */
@@ -384,7 +414,7 @@ declare class ClownCryption {
      * @see {@link CFS.generateStringFile}
      * @see {@link ClownCryption.importStringFile}
      */
-    exportStringToFile(encryptedString: string, { fileName, filePath, overwrite, exportType, encryptFile, key, includeKey, iv, includeIv, algorithm, includeAlgorithm, salt, includeSalt, charset, includeCharset, commonReplacers }: IFileExportOptions): string;
+    exportStringToFile(encryptedString: string, { fileName, filePath, overwrite, exportType, encryptFile, encryptInClown, key, includeKey, iv, includeIv, algorithm, includeAlgorithm, salt, includeSalt, charset, includeCharset, commonReplacers, }: IFileExportOptions): string;
     /**
      * Imports a message from a file
      * @param filePath Path to the file
@@ -461,17 +491,14 @@ declare class CFS {
      * @param {IFileExportOptions} options The export options
      * @returns {string} The export file's path
      */
-    static generateStringFile(str: string, { fileName, filePath, overwrite, exportType, encryptFile, key, includeKey, iv, includeIv, algorithm, includeAlgorithm, salt, includeSalt, charset, includeCharset, commonReplacers, includeCommonReplacers, includeWhiteSpace }: IFileExportOptions): string;
+    static generateStringFile(str: string, { fileName, filePath, overwrite, exportType, encryptFile, encryptInClown, key, includeKey, iv, includeIv, algorithm, includeAlgorithm, salt, includeSalt, charset, includeCharset, commonReplacers, includeCommonReplacers, }: IFileExportOptions): string;
     /**
      * Reads the content of a file and returns them in object format
      * @param filePath The path to the file
      * @param key The key to decrypt the file
-     * @param importByFileContent If the filePath param is set to the file content
      * @returns The content of the file in object format
      */
-    static readStringFile(filePath: string | {
-        [key: string]: string;
-    }, key?: string, importByFileContent?: boolean): {
+    static readStringFile(filePath: string | fs.PathLike, key?: string): {
         [key: string]: any;
     };
     /**
@@ -481,7 +508,7 @@ declare class CFS {
      * @param options The options for exporting
      * @returns The export file's path
      */
-    static exportConfig(filePath: string, client: ClownCryption, { encrypt, exportStyle, includeAlgorithm, includeCharset, includeCommonReplacers, includeSalt }: IExportConfigOptions): string;
+    static exportConfig(filePath: string, client: ClownCryption, { encryptFile, exportType, includeAlgorithm, includeCharset, includeCommonReplacers, includeSalt, encryptInClown, }: IExportConfigOptions): string;
     /**
      * Read a configuration file and returns it as an object
      * @param filePath Path to the file to read
@@ -491,58 +518,6 @@ declare class CFS {
     static readFileConfig(filePath: string, key?: string): {
         [key: string]: string;
     };
-    /**
-     * Encrypts a string or object
-     * @param str The content to encrypt
-     * @param key The key for the encryption algorithm
-     * @returns Encrypted message
-     */
-    static encryptTransport<T extends {
-        [key: string]: unknown;
-    }>(str: T | string, key: string): {
-        [key: string]: string;
-    } | string;
-    /**
-     * Decrypts content returned by the {@link CFS.encryptTransport | Encrypt Transport} method
-     * @param str The return value of {@link CFS.encryptTransport | Encrypt Transport}
-     * @param key The key of the encryption
-     * @returns Unencrypted content
-     */
-    static decryptTransport(str: string | {
-        [key: string]: string;
-    }, key: string): typeof str;
-    /**
-     * Exports an object to a js file
-     * @param fPath The export file's path
-     * @param content The content to be exported
-     * @returns The path to the exported file
-     */
-    private static _exportToJS;
-    /**
-     * Imports the content from a js file
-     * @param fPath The file's path
-     * @returns The file's content
-     */
-    private static _importFromJS;
-    /**
-     * Parses the content of a .clown file and returns it as an object
-     * @param content The content of a .clown file
-     * @param key The key to the encryption of the file
-     * @returns Content of the .clown file as an object
-     */
-    static parseClown(content: string, key?: string): {
-        [key: string]: string;
-    };
-    /**
-     * Puts an object in .clown format
-     * @param fileName The file's name
-     * @param content The file's content
-     * @param encrypt If you want to encrypt the file or not, if a string is provided than that string is used as the key, defaults to false
-     * @returns String in .clown format
-     */
-    static clownify(fileName: string, content: {
-        [key: string]: any;
-    }, encrypt?: false | string): string;
     /**
      * Check to see if a string is a hex string or not
      * @param str String to check
@@ -560,11 +535,28 @@ declare class CFS {
     private static _stringProp;
     /**
      * Formats the path of files
-     * @param fPath The path of the file
+     * @param filePath The path of the file
      * @param overwrite If false and the file exists the function will generate a random name for the file, else overwrites the file
+     * @param includeFileExt If you want to include the file extention of the file if one is found
      * @returns fileName and path
      */
     private static _serializePath;
+    /**
+     * Generates a buffer to be written to an output file
+     * @param content The content of the new file
+     * @param fileType Which format you want to export to
+     * @param encrypt If you want to encrypt the file or not
+     * @param encodeInClown If you want the file to be encoded in clown
+     * @returns A buffer with the content
+     */
+    private static _generateOutputString;
+    /**
+     * Parses the content of the file
+     * @param content The content of the imported file
+     * @param key The key to the encryption
+     * @returns An object with the content of the file
+     */
+    private static _generateInputObject;
 }
 
 /**
@@ -579,8 +571,10 @@ declare type CharsetMode = "normal" | "efficient";
  * Different classes of charsets
  */
 declare type ICharsetChars = IEfficientBinaryCharset | ILiteralCharset | IBinaryCharset;
+/** Supported algorithms */
+declare type Algorithms = "aes128" | "aes192" | "aes256";
 /**
- * Defines the options for the ClownCryption Constructor
+ * Defines the options for the {@link ClownCryption.constructor | ClownCryption Constructor}
  * @interal
  */
 interface ClownOptions {
@@ -607,10 +601,14 @@ interface ClownOptions {
     charset?: PublicCharset | string;
     /**
      * The Algorithm used to encrypt the message
-     * @defaultValue aes-192-ccm
+     * @defaultValue aes192
      */
-    algorithm?: Crypto.CipherCCMTypes | Crypto.CipherGCMTypes | Crypto.CipherOCBTypes;
-    /** @hidden */
+    algorithm?: Algorithms;
+    /**
+     * Common Replacers for the algorithm
+     * @remarks The common replacers are used on the Efficient Binary charsets to reduce the length of the binary string by replacing common patterns with these
+     * @defaultValue ["100", "_"], ["110", "+"]
+     */
     commonReplacers?: [string, string][];
 }
 /**
@@ -679,16 +677,16 @@ interface StaticEncryptOptions {
     salt?: string;
     /**
      * The algorithm used to encrypt the message
-     * @defaultValue aes-192-cbc
+     * @defaultValue aes192
      * @see {@link https://www.openssl.org/docs/man1.1.1/man1/ciphers.html | OpenSSL Ciphers}
      */
-    algorithm?: ClownOptions["algorithm"];
+    algorithm?: Algorithms;
     /**
      * The charset used to encode the encrypted message
      * @defaultValue {@link defaultCharsets.DefaultEfficientBinaryCharset | Default Efficient Binary Charset}
      * @see {@link charsets.PublicCharset}
      */
-    charset?: PublicCharset;
+    charset?: PublicCharset | string;
 }
 /**
  * Base Public Charset Options
@@ -769,9 +767,9 @@ interface IEfficientBinaryCharset {
     /** What the character : is replaced with */
     ":": string;
     /** What the first common replacer is replaced with */
-    "commonReplacer1": string;
+    commonReplacer1: string;
     /** What the second common replacer is replaced with */
-    "commonReplacer2": string;
+    commonReplacer2: string;
     /** What the character . is replaced with */
     ".": string;
 }
@@ -780,17 +778,17 @@ interface IEfficientBinaryCharset {
  */
 interface ILiteralCharset {
     /** What the character a is replaced with */
-    "a": string;
+    a: string;
     /** What the character b is replaced with */
-    "b": string;
+    b: string;
     /** What the character c is replaced with */
-    "c": string;
+    c: string;
     /** What the character d is replaced with */
-    "d": string;
+    d: string;
     /** What the character e is replaced with */
-    "e": string;
+    e: string;
     /** What the character f is replaced with */
-    "f": string;
+    f: string;
     /** What the character 0 is replaced with */
     "0": string;
     /** What the character 1 is replaced with */
@@ -844,7 +842,7 @@ interface IFileExportOptions {
      * @hidden
      * @privateRemark Not implemented yet
      */
-    encryptInClown?: boolean;
+    encryptInClown?: boolean | "short" | "very short";
     /**
      * The exported key,
      * The key is only exported if {@link IFileExportOptions.includeKey | includeKey} is set to true
@@ -875,7 +873,7 @@ interface IFileExportOptions {
      * @defaultValue {@link ClownCryption._algorithm | ClownCryption Instance Algorithm}
      * @see {@link https://www.openssl.org/docs/man1.1.1/man1/ciphers.html | OpenSSL Ciphers}
      */
-    algorithm?: Crypto.CipherCCMTypes | Crypto.CipherGCMTypes | Crypto.CipherOCBTypes;
+    algorithm?: Algorithms;
     /**
      * Whether {@link IFileExportOptions.algorithm | the algorithm} should be exported or not
      * @defaultValue false
@@ -931,7 +929,7 @@ interface IExportConfigOptions {
      * If a string is provided that string is used as the key of the encryption, not available for js export type
      * @defaultValue false
      */
-    encrypt?: false | string;
+    encryptFile?: false | string;
     /**
      * Whether to export the instance charset
      * @defaultValue true
@@ -956,7 +954,12 @@ interface IExportConfigOptions {
      * The file type you would like to export to
      * @defaultValue clown
      */
-    exportStyle?: "clown" | "json" | "js";
+    exportType?: "clown" | "json" | "js";
+    /**
+     * If you want the output file to put encoded in clown
+     * @defaultValue true
+     */
+    encryptInClown?: boolean | "short" | "very short";
 }
 
-export { CFS, CharsetMode, CharsetType, ClownCryption, ClownOptions, EncryptOptions, IBinaryCharset, IBinaryCharsetOptions, ICharsetChars, IEfficientBinaryCharset, IExportConfigOptions, IFileExportOptions, ILiteralCharset, ILiteralCharsetOptions, StaticEncryptOptions, charsets, ClownCryption as default, defaults as defaultCharsets };
+export { Algorithms, CFS, CharsetMode, CharsetType, ClownCryption, ClownOptions, EncryptOptions, IBinaryCharset, IBinaryCharsetOptions, ICharsetChars, IEfficientBinaryCharset, IExportConfigOptions, IFileExportOptions, ILiteralCharset, ILiteralCharsetOptions, StaticEncryptOptions, charsets, ClownCryption as default, defaults as defaultCharsets };
