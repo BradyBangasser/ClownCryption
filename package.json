@@ -1,7 +1,7 @@
 {
   "name": "clowncryption",
   "packageManager": "yarn@3.2.0",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "main": "./dist/index.js",
   "scripts": {
     "build": "yarn prettier --write ./src && yarn tsup --dts && npx typedoc src/index.ts --options typedoc.json",
