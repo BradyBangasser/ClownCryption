@@ -188,15 +188,15 @@ abstract class BaseCharset {
    */
   private _decodeBinary(str: string) {
     str = this._decodeLiteral(str);
+
     if (this.mode === "efficient") {
       str = ClownCryption.decondenseBinary(str);
     }
 
     const builder: string[] = [];
-    (str.match(/.{8}/g) as string[]).forEach((char) => {
+    (str.match(/[01]{8}/g) as string[]).forEach((char) => {
       builder.push(String.fromCharCode(parseInt(char, 2)));
     });
-
     return builder.join("");
   }
 

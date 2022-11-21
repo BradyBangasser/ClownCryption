@@ -153,6 +153,8 @@ class ClownCryption {
     salt: string = "pepper",
     log: boolean = true
   ) {
+    if (typeof str !== "string") throw new Error(`${str}`);
+
     const decipher = Crypto.createDecipheriv(
       `aes${keylen}`,
       Crypto.scryptSync(key, salt, keylen / 8),
@@ -160,6 +162,11 @@ class ClownCryption {
     );
 
     let decryption: string = "";
+
+    decryption = decipher.update(str, "hex", "utf-8");
+    decryption += decipher.final("utf-8");
+
+    return decryption;
     try {
       decryption = decipher.update(str, "hex", "utf-8");
       decryption += decipher.final("utf-8");
@@ -208,7 +215,12 @@ class ClownCryption {
     algorithm = "aes192",
     salt = "pepper",
   }: StaticEncryptOptions) {
-    return ClownCryption._getCharset(charset as PublicCharset)?.encode(
+    const obCharset = ClownCryption._getCharset(charset as PublicCharset);
+    if (typeof obCharset !== "object")
+      throw new SyntaxError(
+        `Charset not found, could find charset matching: \n${charset}`
+      );
+    return obCharset.encode(
       this.aesEncrypt(
         message,
         key,
@@ -233,6 +245,7 @@ class ClownCryption {
     algorithm = this.algorithm,
     charset = this.charset,
   }: EncryptOptions) {
+    if (typeof message !== "string") throw new Error(`${message}`);
     return ClownCryption.decrypt({
       message,
       key,
@@ -477,6 +490,8 @@ class ClownCryption {
    * @see {@link ClownCryption.condenseBinary}
    */
   static decondenseBinary(condensedBinary: string) {
+    if (condensedBinary.match(/[01]/g)?.length === condensedBinary.length)
+      return condensedBinary;
     let buildString = "";
     if (condensedBinary.includes(":")) {
       const variableString = condensedBinary.split(":")[0];
