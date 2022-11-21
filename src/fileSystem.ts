@@ -337,7 +337,7 @@ class CFS {
         false
       );
 
-    // the part that does stuff
+    // the part that does stuff, I think
     if (this.isHex(content)) content = decrypt(content);
     if (DefaultLiteralCharset.validChars(content))
       content = decrypt(
