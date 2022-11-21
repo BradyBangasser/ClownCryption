@@ -10,6 +10,7 @@ import {
 
 /**
  * Clown File System, manages files, imports, and exports
+ * @remarks It is a completely static class
  */
 class CFS {
   /** 
