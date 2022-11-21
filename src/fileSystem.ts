@@ -12,7 +12,10 @@ import {
  * Clown File System, manages files, imports, and exports
  */
 class CFS {
-  /** @hidden */
+  /** 
+   * @hidden
+   * @privateRemark This shouldn't be shown on docs because it's a private constructor
+   */
   private constructor() {}
 
   /**
