@@ -76,34 +76,39 @@ abstract class BaseCharset {
    * @param charset The charset
    */
   private _createCharsetMap(charset: typeof this._charset) {
-    Object.entries(charset).forEach((character) => {
-      if (character[0].startsWith("commonReplacer")) {
+    Object.entries(charset).forEach(([replaced, replacer]) => {
+      if (this._charsetMap.has(replaced))
+        throw new SyntaxError(
+          `The character ${replaced} has already been set to ${this._charsetMap.get(
+            replaced
+          )}, it cannot be set to ${replacer}`
+        );
+      if (this._inverseCharsetMap.has(replacer) === true)
+        throw new SyntaxError(
+          `The character ${replacer} has already been used as ${this._inverseCharsetMap.get(
+            replacer
+          )}, it cannot be set to ${replaced}`
+        );
+      if (
+        BaseCharset.getStringEmojis(String(replacer)).length !== 1 &&
+        String(replacer).length !== 1
+      )
+        throw new SyntaxError(`Character ${replacer}.length > 1`);
+
+      if (replaced.startsWith("commonReplacer")) {
         this._charsetMap.set(
-          this._commonReplacer[parseInt(String(character[0].at(-1))) - 1][1],
-          character[1]
+          this._commonReplacer[parseInt(String(replaced.at(-1))) - 1][1],
+          replacer
         );
         this._inverseCharsetMap.set(
-          character[1],
-          this._commonReplacer[parseInt(String(character[0].at(-1))) - 1][1]
+          replacer,
+          this._commonReplacer[parseInt(String(replaced.at(-1))) - 1][1]
         );
         return;
       }
 
-      if (
-        BaseCharset.getStringEmojis(String(character)).length !== 1 &&
-        String(character).length !== 1
-      )
-        throw new SyntaxError(`Character ${character}.length > 1`);
-      if (
-        this._charsetMap.get(String(character[0])) ||
-        this._inverseCharsetMap.get(String(character[1]))
-      )
-        throw new SyntaxError(
-          `Cannot set ${character[0]} to ${character[1]} because one of them is already in the charset`
-        );
-
-      this._charsetMap.set(String(character[0]), String(character[1]));
-      this._inverseCharsetMap.set(String(character[1]), String(character[0]));
+      this._charsetMap.set(String(replaced), String(replacer));
+      this._inverseCharsetMap.set(String(replacer), String(replaced));
     });
   }
 
@@ -130,9 +135,9 @@ abstract class BaseCharset {
       builder.push(char.charCodeAt(0).toString(2).padStart(8, "0"));
     });
 
-    if (this.mode === "efficient")
+    if (this.mode === "efficient") {
       returnVal = ClownCryption.condenseBinary(builder.join(""));
-    else returnVal = builder.join("");
+    } else returnVal = builder.join("");
     return this._encodeLiteral(returnVal);
   }
 
@@ -194,7 +199,7 @@ abstract class BaseCharset {
     }
 
     const builder: string[] = [];
-    (str.match(/[01]{8}/g) as string[]).forEach((char) => {
+    (str.match(/[01]{8}/g) || []).forEach((char) => {
       builder.push(String.fromCharCode(parseInt(char, 2)));
     });
     return builder.join("");

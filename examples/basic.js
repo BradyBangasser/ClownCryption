@@ -1,4 +1,4 @@
-const ClownCryption = require("clowncryption");
+const ClownCryption = require("clowncryption").default;
 
 // Encrypt a string
 const encryptedString = ClownCryption.encrypt({

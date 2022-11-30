@@ -50,10 +50,10 @@ export const DefaultEfficientBinaryCharset = new EfficientBinaryCharset(
     "9": "🥴",
     ".": "😐",
     ":": "😏",
-    commonReplacer1: "🤯",
+    commonReplacer1: "🥌",
     commonReplacer2: "🥛",
   },
-  ["eb"]
+  ["eb", "efficient", "efficient binary"]
 );
 
 /**

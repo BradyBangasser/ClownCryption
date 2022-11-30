@@ -21,7 +21,7 @@ yarn add clowncryption
 
 ```js
 import ClownCryption from 'clowncryption';
-// or const ClownCryption = require("clowncryption");
+// or const ClownCryption = require("clowncryption").default;
 
 const Clown = new ClownCryption({
     key: "Secret Key",
@@ -55,7 +55,7 @@ ClownCryption makes it easy to create new charsets
 
 ```js
 import ClownCryption from 'clowncryption';
-// Or const ClownCrption = require("clowncryption")
+// Or const ClownCrption = require("clowncryption").default
 
 import { charsets } from 'clowncryption'; 
 // Or const { charsets } = require("clowncryption")

@@ -13,7 +13,7 @@ import {
  * @remarks It is a completely static class
  */
 class CFS {
-  /** 
+  /**
    * @hidden
    * @privateRemark This shouldn't be shown on docs because it's a private constructor
    */
@@ -360,7 +360,7 @@ class CFS {
             if (index % 2 === 1) val = val.substring(1, val.length - 1);
             let valDecode = decode(val);
             if (valDecode.toLowerCase().includes("undefined"))
-              return val.replaceAll("*", "");
+              return val.replace(/\*/g, "");
             if (this.isHex(valDecode)) return decrypt(valDecode) || val;
             return val;
           });

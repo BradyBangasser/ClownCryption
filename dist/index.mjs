@@ -1,12 +1,7 @@
 var __defProp = Object.defineProperty;
-var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __export = (target, all) => {
   for (var name in all)
     __defProp(target, name, { get: all[name], enumerable: true });
-};
-var __publicField = (obj, key, value) => {
-  __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-  return value;
 };
 var __accessCheck = (obj, member, msg) => {
   if (!member.has(obj))
@@ -48,16 +43,12 @@ __export(charsets_exports, {
 
 // src/defaultCharsets/baseCharset.ts
 var BaseCharset = class {
-  _charset;
-  _charsetMap = /* @__PURE__ */ new Map();
-  _inverseCharsetMap = /* @__PURE__ */ new Map();
-  _commonReplacer;
-  type;
-  mode;
   constructor(type, mode, charset, commonReplacers = [
     ["100", "_"],
     ["110", "+"]
   ]) {
+    this._charsetMap = /* @__PURE__ */ new Map();
+    this._inverseCharsetMap = /* @__PURE__ */ new Map();
     this._charset = charset;
     this.type = type;
     this.mode = mode;
@@ -68,26 +59,34 @@ var BaseCharset = class {
     return this._charset;
   }
   _createCharsetMap(charset) {
-    Object.entries(charset).forEach((character) => {
-      if (character[0].startsWith("commonReplacer")) {
+    Object.entries(charset).forEach(([replaced, replacer]) => {
+      if (this._charsetMap.has(replaced))
+        throw new SyntaxError(
+          `The character ${replaced} has already been set to ${this._charsetMap.get(
+            replaced
+          )}, it cannot be set to ${replacer}`
+        );
+      if (this._inverseCharsetMap.has(replacer) === true)
+        throw new SyntaxError(
+          `The character ${replacer} has already been used as ${this._inverseCharsetMap.get(
+            replacer
+          )}, it cannot be set to ${replaced}`
+        );
+      if (BaseCharset.getStringEmojis(String(replacer)).length !== 1 && String(replacer).length !== 1)
+        throw new SyntaxError(`Character ${replacer}.length > 1`);
+      if (replaced.startsWith("commonReplacer")) {
         this._charsetMap.set(
-          this._commonReplacer[parseInt(String(character[0].at(-1))) - 1][1],
-          character[1]
+          this._commonReplacer[parseInt(String(replaced.at(-1))) - 1][1],
+          replacer
         );
         this._inverseCharsetMap.set(
-          character[1],
-          this._commonReplacer[parseInt(String(character[0].at(-1))) - 1][1]
+          replacer,
+          this._commonReplacer[parseInt(String(replaced.at(-1))) - 1][1]
         );
         return;
       }
-      if (BaseCharset.getStringEmojis(String(character)).length !== 1 && String(character).length !== 1)
-        throw new SyntaxError(`Character ${character}.length > 1`);
-      if (this._charsetMap.get(String(character[0])) || this._inverseCharsetMap.get(String(character[1])))
-        throw new SyntaxError(
-          `Cannot set ${character[0]} to ${character[1]} because one of them is already in the charset`
-        );
-      this._charsetMap.set(String(character[0]), String(character[1]));
-      this._inverseCharsetMap.set(String(character[1]), String(character[0]));
+      this._charsetMap.set(String(replaced), String(replacer));
+      this._inverseCharsetMap.set(String(replacer), String(replaced));
     });
   }
   getChar(character) {
@@ -100,9 +99,9 @@ var BaseCharset = class {
     splitStr.forEach((char) => {
       builder.push(char.charCodeAt(0).toString(2).padStart(8, "0"));
     });
-    if (this.mode === "efficient")
+    if (this.mode === "efficient") {
       returnVal = clowncryption_default.condenseBinary(builder.join(""));
-    else
+    } else
       returnVal = builder.join("");
     return this._encodeLiteral(returnVal);
   }
@@ -134,7 +133,7 @@ var BaseCharset = class {
       str = clowncryption_default.decondenseBinary(str);
     }
     const builder = [];
-    str.match(/[01]{8}/g).forEach((char) => {
+    (str.match(/[01]{8}/g) || []).forEach((char) => {
       builder.push(String.fromCharCode(parseInt(char, 2)));
     });
     return builder.join("");
@@ -183,15 +182,16 @@ var baseCharset_default = BaseCharset;
 
 // src/defaultCharsets/charsets.ts
 var PublicCharset = class extends baseCharset_default {
-  name;
-  aliases;
   constructor(name, charset, aliases = []) {
+    var __super = (...args) => {
+      super(...args);
+    };
     if ("a" in charset)
-      super("literal", "normal", charset);
+      __super("literal", "normal", charset);
     else if (8 in charset)
-      super("binary", "efficient", charset);
+      __super("binary", "efficient", charset);
     else
-      super("binary", "normal", charset);
+      __super("binary", "normal", charset);
     this.name = name.toLowerCase().trim();
     this.aliases = Array.isArray(aliases) ? aliases.map((val) => val.toLowerCase().trim()) : [aliases.toLowerCase().trim()];
   }
@@ -203,11 +203,12 @@ var EfficientBinaryCharset = class extends PublicCharset {
 };
 var BinaryCharset = class extends PublicCharset {
   constructor(name, chars, aliases) {
+    var _a, _b;
     super(
       name,
       {
-        "0": chars[0] ?? chars["0"],
-        "1": chars[1] ?? chars["1"]
+        "0": (_a = chars[0]) != null ? _a : chars["0"],
+        "1": (_b = chars[1]) != null ? _b : chars["1"]
       },
       aliases
     );
@@ -240,10 +241,10 @@ var DefaultEfficientBinaryCharset = new EfficientBinaryCharset(
     "9": "\u{1F974}",
     ".": "\u{1F610}",
     ":": "\u{1F60F}",
-    commonReplacer1: "\u{1F92F}",
+    commonReplacer1: "\u{1F94C}",
     commonReplacer2: "\u{1F95B}"
   },
-  ["eb"]
+  ["eb", "efficient", "efficient binary"]
 );
 var DefaultLiteralCharset = new LiteralCharset(
   "LiteralCharset",
@@ -269,11 +270,11 @@ var DefaultLiteralCharset = new LiteralCharset(
 );
 var CharsetManager = class {
   constructor() {
+    this._charsets = /* @__PURE__ */ new Map();
     this.addCharset(DefaultLiteralCharset);
     this.addCharset(DefaultEfficientBinaryCharset);
     this.addCharset(DefaultBinaryCharset);
   }
-  _charsets = /* @__PURE__ */ new Map();
   getCharset(name) {
     name = name.toLowerCase().trim();
     if (typeof this._charsets.get(name) !== "undefined")
@@ -297,7 +298,6 @@ var CharsetManager = class {
     return this.instance;
   }
 };
-__publicField(CharsetManager, "instance");
 var defaults_default = CharsetManager.init();
 
 // src/clowncryption.ts
@@ -330,7 +330,7 @@ var CFS = class {
     includeCommonReplacers = false
   }) {
     const { path: fPath } = this._serializePath(
-      path.join(filePath ?? "", fileName),
+      path.join(filePath != null ? filePath : "", fileName),
       overwrite
     );
     const exportContent = {
@@ -338,7 +338,7 @@ var CFS = class {
       iv: this._stringProp(iv, includeIv),
       algorithm: this._stringProp(algorithm, includeAlgorithm),
       salt: this._stringProp(salt, includeSalt),
-      charset: this._stringProp(charset?.toJSON(), includeCharset),
+      charset: this._stringProp(charset == null ? void 0 : charset.toJSON(), includeCharset),
       commonReplacers: this._stringProp(
         commonReplacers,
         includeCommonReplacers
@@ -397,10 +397,11 @@ var CFS = class {
     );
   }
   static isHex(str) {
+    var _a, _b, _c, _d;
     if (typeof str === "string")
-      return (str.match(/[0-9"a-f]{1}/gi)?.length ?? 0) === str.length;
+      return ((_b = (_a = str.match(/[0-9"a-f]{1}/gi)) == null ? void 0 : _a.length) != null ? _b : 0) === str.length;
     let objKey = Object.entries(str)[0];
-    return (objKey[0].match(/[0-9a-f]{1}/gi)?.length ?? 0) === objKey[0].length;
+    return ((_d = (_c = objKey[0].match(/[0-9a-f]{1}/gi)) == null ? void 0 : _c.length) != null ? _d : 0) === objKey[0].length;
   }
   static _serializePath(filePath, overwrite = false, includeFileExt = false) {
     filePath = filePath.toString();
@@ -502,7 +503,7 @@ var CFS = class {
               val = val.substring(1, val.length - 1);
             let valDecode = decode(val);
             if (valDecode.toLowerCase().includes("undefined"))
-              return val.replaceAll("*", "");
+              return val.replace(/\*/g, "");
             if (this.isHex(valDecode))
               return decrypt(valDecode) || val;
             return val;
@@ -517,7 +518,7 @@ var CFS = class {
     throw new Error(`Unable to parse content: ${content}`);
   }
 };
-__publicField(CFS, "_stringProp", (prop, includeProp) => includeProp === true ? prop?.toString() !== "[object Object]" && typeof prop?.toString() === "string" ? prop.toString() : JSON.stringify(prop) : void 0);
+CFS._stringProp = (prop, includeProp) => includeProp === true ? (prop == null ? void 0 : prop.toString()) !== "[object Object]" && typeof (prop == null ? void 0 : prop.toString()) === "string" ? prop.toString() : JSON.stringify(prop) : void 0;
 var fileSystem_default = CFS;
 
 // src/clowncryption.ts
@@ -532,12 +533,7 @@ var _ClownCryption = class {
     commonReplacers = _ClownCryption._commonReplacers
   }) {
     __privateAdd(this, _key, void 0);
-    __publicField(this, "_charset");
-    __publicField(this, "_algorithm");
-    __publicField(this, "_commonReplacers");
-    __publicField(this, "_salt");
-    __publicField(this, "_iv");
-    __publicField(this, "charsetMangager", defaults_default);
+    this.charsetMangager = defaults_default;
     __privateSet(this, _key, key.toString());
     this._iv = iv.toString();
     this._salt = salt.toString();
@@ -581,9 +577,6 @@ var _ClownCryption = class {
       Buffer.alloc(16, iv)
     );
     let decryption = "";
-    decryption = decipher.update(str, "hex", "utf-8");
-    decryption += decipher.final("utf-8");
-    return decryption;
     try {
       decryption = decipher.update(str, "hex", "utf-8");
       decryption += decipher.final("utf-8");
@@ -662,8 +655,9 @@ ${charset}`
     algorithm = "aes192",
     salt = "pepper"
   }) {
+    var _a, _b;
     return _ClownCryption.aesDecrypt(
-      _ClownCryption._getCharset(charset)?.decode(message) ?? "",
+      (_b = (_a = _ClownCryption._getCharset(charset)) == null ? void 0 : _a.decode(message)) != null ? _b : "",
       key,
       iv,
       parseInt(algorithm.replace(/[^1-9]/g, "")),
@@ -735,31 +729,26 @@ ${charset}`
   }
   static condenseBinary(binaryString) {
     let count = 0;
-    let lastChar = "";
+    let lastChar;
     let efficientBuilder = "";
     const variables = [];
     const buildStringSplit = binaryString.split("");
-    for (let i in buildStringSplit) {
-      if (buildStringSplit[i] !== lastChar) {
-        if (count < 2) {
-          efficientBuilder += _ClownCryption.multiplyString(lastChar, count);
-          lastChar = buildStringSplit[i];
-          count = 0;
-        } else {
-          efficientBuilder += lastChar + count;
-          lastChar = buildStringSplit[i];
-          count = 0;
-        }
-      } else {
+    for (let i = 0; i <= buildStringSplit.length; i++) {
+      if (typeof lastChar === "undefined") {
+        lastChar = buildStringSplit[i];
         count++;
+        continue;
       }
+      if (lastChar != buildStringSplit[i]) {
+        efficientBuilder += `${count > 2 ? `${lastChar}${count}` : _ClownCryption.multiplyString(lastChar, count)}`;
+        count = 1;
+        lastChar = buildStringSplit[i];
+        continue;
+      }
+      count++;
     }
-    efficientBuilder += lastChar + count;
-    for (let i in this._commonReplacers) {
-      efficientBuilder = efficientBuilder.replaceAll(
-        this._commonReplacers[i][0],
-        this._commonReplacers[i][1]
-      );
+    for (const cr of this._commonReplacers) {
+      efficientBuilder = efficientBuilder.replaceAll(cr[0], cr[1]);
     }
     for (let i = 0; i <= 9; i++) {
       if (!efficientBuilder.includes(i.toString()))
@@ -796,47 +785,41 @@ ${charset}`
     return efficientBuilder;
   }
   static decondenseBinary(condensedBinary) {
-    if (condensedBinary.match(/[01]/g)?.length === condensedBinary.length)
-      return condensedBinary;
-    let buildString = "";
+    var _a;
     if (condensedBinary.includes(":")) {
-      const variableString = condensedBinary.split(":")[0];
-      condensedBinary = condensedBinary.split(":")[1];
-      const variables = variableString.split(".");
-      variables.forEach((variable) => {
-        condensedBinary = condensedBinary.replaceAll(
-          variable[0],
-          variable.substring(1)
-        );
-      });
+      let [varString, str] = condensedBinary.split(":");
+      for (const vari of varString.split(".")) {
+        str = str.replaceAll(vari[0], vari.substring(1));
+      }
+      condensedBinary = str;
     }
-    for (let i in this._commonReplacers) {
+    for (const commonReplacer of this._commonReplacers) {
       condensedBinary = condensedBinary.replaceAll(
-        this._commonReplacers[i][1],
-        this._commonReplacers[i][0]
+        commonReplacer[1],
+        commonReplacer[0]
       );
     }
-    condensedBinary.split("").forEach((value, index, array) => {
-      if (parseInt(value) >= 2) {
-        buildString += _ClownCryption.multiplyString(
-          array[index - 1],
-          parseInt(value)
+    if (condensedBinary.length === ((_a = condensedBinary.match(/[10]/g)) == null ? void 0 : _a.length))
+      return condensedBinary;
+    let split = condensedBinary.split("");
+    for (let i in split) {
+      if (parseInt(split[parseInt(i) + 1]) > 1) {
+        split[i] = this.multiplyString(
+          split[i],
+          parseInt(split[parseInt(i) + 1])
         );
-        return;
       }
-      if (parseInt(array[index + 1]) <= 1) {
-        return buildString += value;
-      }
-    });
-    return buildString + buildString[buildString.length - 1];
+    }
+    return split.join("").replace(/[^01]/g, "");
   }
   static findPattern(str, maxPatternSize = 4, minPatternSize = 3) {
+    var _a;
     let patterns = {};
     for (let i = maxPatternSize; i >= minPatternSize; i--) {
       let n;
       for (n = 0; n < str.length; n += i) {
         const pattern = str.substring(n, n + i);
-        patterns[pattern] = (patterns[pattern] ?? 0) + 1;
+        patterns[pattern] = ((_a = patterns[pattern]) != null ? _a : 0) + 1;
       }
     }
     return Object.entries(patterns).sort((a, b) => b[1] * b[0].length - a[1] * a[0].length).filter(
@@ -862,7 +845,7 @@ ${charset}`
   }
   static multiplyString(str, num) {
     let builder = "";
-    for (let i = 0; i <= num; i++) {
+    for (let i = 0; i < num; i++) {
       builder += str;
     }
     return builder;
@@ -870,10 +853,10 @@ ${charset}`
 };
 var ClownCryption = _ClownCryption;
 _key = new WeakMap();
-__publicField(ClownCryption, "_commonReplacers", [
+ClownCryption._commonReplacers = [
   ["100", "_"],
   ["110", "+"]
-]);
+];
 var clowncryption_default = ClownCryption;
 
 // src/index.ts

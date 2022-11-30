@@ -163,10 +163,6 @@ class ClownCryption {
 
     let decryption: string = "";
 
-    decryption = decipher.update(str, "hex", "utf-8");
-    decryption += decipher.final("utf-8");
-
-    return decryption;
     try {
       decryption = decipher.update(str, "hex", "utf-8");
       decryption += decipher.final("utf-8");
@@ -408,33 +404,34 @@ class ClownCryption {
    */
   static condenseBinary(binaryString: string) {
     let count = 0;
-    let lastChar = "";
+    let lastChar;
     let efficientBuilder = "";
     const variables: string[] = [];
     const buildStringSplit = binaryString.split("");
 
-    for (let i in buildStringSplit) {
-      if (buildStringSplit[i] !== lastChar) {
-        if (count < 2) {
-          efficientBuilder += ClownCryption.multiplyString(lastChar, count);
-          lastChar = buildStringSplit[i];
-          count = 0;
-        } else {
-          efficientBuilder += lastChar + count;
-          lastChar = buildStringSplit[i];
-          count = 0;
-        }
-      } else {
+    for (let i = 0; i <= buildStringSplit.length; i++) {
+      if (typeof lastChar === "undefined") {
+        lastChar = buildStringSplit[i];
         count++;
+        continue;
       }
-    }
-    efficientBuilder += lastChar + count;
 
-    for (let i in this._commonReplacers) {
-      efficientBuilder = efficientBuilder.replaceAll(
-        this._commonReplacers[i][0],
-        this._commonReplacers[i][1]
-      );
+      if (lastChar != buildStringSplit[i]) {
+        efficientBuilder += `${
+          count > 2
+            ? `${lastChar}${count}`
+            : ClownCryption.multiplyString(lastChar, count)
+        }`;
+        count = 1;
+        lastChar = buildStringSplit[i];
+        continue;
+      }
+
+      count++;
+    }
+
+    for (const cr of this._commonReplacers) {
+      efficientBuilder = efficientBuilder.replaceAll(cr[0], cr[1]);
     }
 
     for (let i = 0; i <= 9; i++) {
@@ -480,6 +477,7 @@ class ClownCryption {
 
       efficientBuilder = variableString.join(".") + ":" + efficientBuilder;
     }
+
     return efficientBuilder;
   }
 
@@ -489,45 +487,38 @@ class ClownCryption {
    * @returns Decondensed String
    * @see {@link ClownCryption.condenseBinary}
    */
-  static decondenseBinary(condensedBinary: string) {
-    if (condensedBinary.match(/[01]/g)?.length === condensedBinary.length)
-      return condensedBinary;
-    let buildString = "";
+  static decondenseBinary(condensedBinary: string): string {
     if (condensedBinary.includes(":")) {
-      const variableString = condensedBinary.split(":")[0];
-      condensedBinary = condensedBinary.split(":")[1];
-      const variables = variableString.split(".");
+      let [varString, str] = condensedBinary.split(":");
 
-      variables.forEach((variable) => {
-        condensedBinary = condensedBinary.replaceAll(
-          variable[0],
-          variable.substring(1)
-        );
-      });
+      for (const vari of varString.split(".")) {
+        str = str.replaceAll(vari[0], vari.substring(1));
+      }
+
+      condensedBinary = str;
     }
 
-    for (let i in this._commonReplacers) {
+    for (const commonReplacer of this._commonReplacers) {
       condensedBinary = condensedBinary.replaceAll(
-        this._commonReplacers[i][1],
-        this._commonReplacers[i][0]
+        commonReplacer[1],
+        commonReplacer[0]
       );
     }
 
-    condensedBinary.split("").forEach((value, index, array) => {
-      if (parseInt(value) >= 2) {
-        buildString += ClownCryption.multiplyString(
-          array[index - 1],
-          parseInt(value)
+    if (condensedBinary.length === condensedBinary.match(/[10]/g)?.length)
+      return condensedBinary;
+
+    let split = condensedBinary.split("");
+
+    for (let i in split) {
+      if (parseInt(split[parseInt(i) + 1]) > 1) {
+        split[i] = this.multiplyString(
+          split[i],
+          parseInt(split[parseInt(i) + 1])
         );
-        return;
       }
-
-      if (parseInt(array[index + 1]) <= 1) {
-        return (buildString += value);
-      }
-    });
-
-    return buildString + buildString[buildString.length - 1];
+    }
+    return split.join("").replace(/[^01]/g, "");
   }
 
   /**
@@ -602,7 +593,7 @@ class ClownCryption {
    */
   static multiplyString(str: string, num: number) {
     let builder = "";
-    for (let i = 0; i <= num; i++) {
+    for (let i = 0; i < num; i++) {
       builder += str;
     }
 

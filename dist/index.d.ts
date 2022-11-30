@@ -481,9 +481,13 @@ declare class ClownCryption {
 
 /**
  * Clown File System, manages files, imports, and exports
+ * @remarks It is a completely static class
  */
 declare class CFS {
-    /** @hidden */
+    /**
+     * @hidden
+     * @privateRemark This shouldn't be shown on docs because it's a private constructor
+     */
     private constructor();
     /**
      * Creates a file that contains the message and other parameters
